@@ -1,6 +1,8 @@
 # Build stage
 FROM node:20-alpine as builder
 
+ARG NUXT_PUBLIC_APP_PORT=3000
+
 WORKDIR /app
 
 # Copy package files
@@ -24,7 +26,7 @@ WORKDIR /app
 COPY --from=builder /app/.output ./
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 3700
 
 # Run the application
 CMD ["node", "server/index.mjs"]

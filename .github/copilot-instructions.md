@@ -54,6 +54,8 @@ This is a monorepo template containing:
 - Store migrations in `migrations/` directory with sequential numbering
 - Always use transactions for multi-statement operations
 - Index foreign keys and frequently queried columns
+- Always validate and sanitize inputs to prevent SQL injection
+- Always use `CREATE <DATABASE|TABLE|INDEX|VIEW|FUNCTION> IF NOT EXISTS` for idempotent migrations
 
 ### Docker
 - Use multi-stage builds for optimization
