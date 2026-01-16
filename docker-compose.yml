@@ -6,7 +6,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - JWT_SECRET=my-secret-key
+      # SECURITY WARNING: In production, use Docker secrets or a secure .env file
+      # Never commit sensitive secrets to version control
+      - JWT_SECRET=${JWT_SECRET:-my-secret-key}
+      - PORT=3000
     networks:
       - app-network
 

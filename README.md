@@ -137,10 +137,28 @@ Or using an online tool like [jwt.io](https://jwt.io) with:
 ## Environment Variables
 
 ### Backend
-- `JWT_SECRET`: Secret key for JWT signing and validation (default: `my-secret-key`)
+- `JWT_SECRET`: Secret key for JWT signing and validation (default: `my-secret-key` - **NOT SECURE FOR PRODUCTION**)
+- `PORT`: Port to run the backend server on (default: `3000`)
+
+**Important**: Always set a strong, unique `JWT_SECRET` in production environments. Never use the default secret key.
 
 ### Frontend
 - `NUXT_PUBLIC_API_URL`: Backend API URL (default: `http://backend:3000` in Docker)
+
+### Setting Up Environment Variables
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` with your values:
+   ```bash
+   JWT_SECRET=your-secure-secret-key-here
+   PORT=3000
+   ```
+
+3. When using Docker Compose, create a `.env` file in the project root with your variables, and Docker Compose will automatically load them.
 
 ## Project Structure
 

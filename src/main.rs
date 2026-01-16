@@ -56,7 +56,10 @@ async fn main() {
         .compact()
         .init();
 
-    let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "my-secret-key".to_string());
+    let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| {
+        tracing::warn!("JWT_SECRET not set, using default (NOT SECURE FOR PRODUCTION)");
+        "my-secret-key".to_string()
+    });
 
     let state = Arc::new(AppState {
         jwt_secret,
@@ -78,11 +81,14 @@ async fn main() {
         .layer(CorsLayer::permissive())
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let addr = format!("0.0.0.0:{}", port);
+
+    let listener = tokio::net::TcpListener::bind(&addr)
         .await
         .unwrap();
 
-    info!("Server starting on http://0.0.0.0:3000");
+    info!("Server starting on http://{}", addr);
 
     axum::serve(listener, app).await.unwrap();
 }
