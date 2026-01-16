@@ -118,10 +118,10 @@ async fn main() {
         .await
         .expect("Failed to connect to database");
 
-    let sqls = vec![
-        include_str!("../migrations/001_create_users_table.sql").split(';').collect::<Vec<&str>>(),
-    ];
-    
+    let sqls = vec![include_str!("../migrations/001_create_users_table.sql")
+        .split(';')
+        .collect::<Vec<&str>>()];
+
     // Run migrations
     for sql in sqls.into_iter().flatten() {
         let trimmed_sql = sql.trim().to_string() + ";";
@@ -132,7 +132,7 @@ async fn main() {
                 .expect("Failed to run migrations");
         }
     }
-    
+
     info!("Database connected and migrations applied");
 
     let state = Arc::new(AppState {
