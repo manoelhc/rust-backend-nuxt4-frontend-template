@@ -6,16 +6,16 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use chrono::{DateTime, Utc};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
-use sqlx::{PgPool, postgres::PgPoolOptions};
+use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
 use tower_http::cors::CorsLayer;
 use tracing::info;
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
 // Environment constants
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -189,21 +189,21 @@ async fn validate_token(
             // Check email_verified and mfa_enabled
             let email_verified = claims.email_verified.unwrap_or(false);
             let mfa_enabled = claims.mfa_enabled.unwrap_or(false);
-            
+
             if !email_verified {
                 return Json(ValidateTokenResponse {
                     valid: false,
                     message: "Email not verified".to_string(),
                 });
             }
-            
+
             if !mfa_enabled {
                 return Json(ValidateTokenResponse {
                     valid: false,
                     message: "MFA not enabled".to_string(),
                 });
             }
-            
+
             Json(ValidateTokenResponse {
                 valid: true,
                 message: "Token is valid".to_string(),
@@ -218,9 +218,13 @@ async fn validate_token(
 
 fn validate_jwt_token_with_claims(token: &str, secret: &str) -> Result<Claims, String> {
     let validation = Validation::default();
-    decode::<Claims>(token, &DecodingKey::from_secret(secret.as_ref()), &validation)
-        .map(|data| data.claims)
-        .map_err(|e| format!("{}", e))
+    decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(secret.as_ref()),
+        &validation,
+    )
+    .map(|data| data.claims)
+    .map_err(|e| format!("{}", e))
 }
 
 async fn system_uptime(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -259,23 +263,22 @@ async fn system_onboarding(
     claims: Claims,
 ) -> Result<Json<OnboardingResponse>, (StatusCode, Json<ErrorResponse>)> {
     let sub = &claims.sub;
-    
+
     // Check if user exists
-    let existing_user: Option<User> = sqlx::query_as::<_, User>(
-        "SELECT * FROM users WHERE sub = $1"
-    )
-    .bind(sub)
-    .fetch_optional(&state.db_pool)
-    .await
-    .map_err(|e| {
-        tracing::error!("Database error: {}", e);
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(ErrorResponse {
-                error: "Database error".to_string(),
-            }),
-        )
-    })?;
+    let existing_user: Option<User> =
+        sqlx::query_as::<_, User>("SELECT * FROM users WHERE sub = $1")
+            .bind(sub)
+            .fetch_optional(&state.db_pool)
+            .await
+            .map_err(|e| {
+                tracing::error!("Database error: {}", e);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(ErrorResponse {
+                        error: "Database error".to_string(),
+                    }),
+                )
+            })?;
 
     if let Some(user) = existing_user {
         return Ok(Json(OnboardingResponse {
@@ -286,14 +289,20 @@ async fn system_onboarding(
     }
 
     // Extract user information from claims
-    let user_email = claims.email.clone().unwrap_or_else(|| format!("{}@example.com", sub));
-    let user_fullname = claims.name.clone().unwrap_or_else(|| "Unknown User".to_string());
-    
+    let user_email = claims
+        .email
+        .clone()
+        .unwrap_or_else(|| format!("{}@example.com", sub));
+    let user_fullname = claims
+        .name
+        .clone()
+        .unwrap_or_else(|| "Unknown User".to_string());
+
     // Create new user
     let new_user: User = sqlx::query_as::<_, User>(
         "INSERT INTO users (sub, user_email, user_fullname, organization, properties) 
          VALUES ($1, $2, $3, $4, $5) 
-         RETURNING *"
+         RETURNING *",
     )
     .bind(sub)
     .bind(&user_email)
@@ -324,22 +333,20 @@ async fn get_profile(
     claims: Claims,
 ) -> Result<Json<ProfileResponse>, (StatusCode, Json<ErrorResponse>)> {
     let sub = &claims.sub;
-    
-    let user: Option<User> = sqlx::query_as::<_, User>(
-        "SELECT * FROM users WHERE sub = $1"
-    )
-    .bind(sub)
-    .fetch_optional(&state.db_pool)
-    .await
-    .map_err(|e| {
-        tracing::error!("Database error: {}", e);
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(ErrorResponse {
-                error: "Database error".to_string(),
-            }),
-        )
-    })?;
+
+    let user: Option<User> = sqlx::query_as::<_, User>("SELECT * FROM users WHERE sub = $1")
+        .bind(sub)
+        .fetch_optional(&state.db_pool)
+        .await
+        .map_err(|e| {
+            tracing::error!("Database error: {}", e);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(ErrorResponse {
+                    error: "Database error".to_string(),
+                }),
+            )
+        })?;
 
     match user {
         Some(user) => Ok(Json(ProfileResponse { user })),
@@ -373,7 +380,7 @@ async fn auth_middleware(
                     if !claims.mfa_enabled.unwrap_or(false) {
                         return Err(StatusCode::FORBIDDEN);
                     }
-                    
+
                     // Insert claims into request extensions
                     req.extensions_mut().insert(claims);
                     return Ok(next.run(req).await);

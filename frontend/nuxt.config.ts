@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000',
-      projectName: process.env.NUXT_PUBLIC_PROJECT_NAME || 'My Application'
+      projectName: process.env.NUXT_PUBLIC_PROJECT_NAME || 'My Application',
+      aiFrontendDev: process.env.AI_FRONTEND_DEV || 'false'
     }
   },
 

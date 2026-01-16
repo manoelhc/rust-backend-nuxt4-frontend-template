@@ -6,6 +6,28 @@ This is a monorepo template containing:
 - **Frontend**: Nuxt 4 with Vue 3, TailwindCSS, Flowbite, and i18n support
 - **Infrastructure**: Docker Compose with PostgreSQL, Redis, Nginx gateway, and observability stack
 
+## Code Quality Requirements
+
+**CRITICAL: Before completing any task, you MUST:**
+
+1. **Run Linters and Fix Issues**
+   - Backend: `cargo fmt` and `cargo clippy -- -D warnings`
+   - Frontend: Check with `npm run build` (ensures TypeScript compiles)
+   - Fix all linting errors and warnings
+
+2. **Check Dependencies**
+   - Backend: Run `cargo outdated` and `cargo audit`
+   - Frontend: Run `npm outdated` and `npm audit`
+   - Update dependencies if safe to do so
+   - Fix security vulnerabilities
+
+3. **Verify Translations**
+   - **EVERY SINGLE TEXT** in the frontend MUST be translated
+   - Check all three language files: `en.json`, `pt.json`, `es.json`
+   - No hardcoded strings in `.vue` files
+   - Use `$t('key.path')` for all user-facing text
+   - Verify all translation keys exist in all language files
+
 ## Code Style and Standards
 
 ### Rust Backend
@@ -73,6 +95,38 @@ This is a monorepo template containing:
 ### Frontend
 - `NUXT_PUBLIC_API_URL`: Backend API URL
 - `NUXT_PUBLIC_PROJECT_NAME`: Application name displayed in UI
+- `AI_FRONTEND_DEV`: Enable mock API mode for frontend development without backend (set to 'true')
+
+## AI Frontend Development Mode
+
+**For UI development without backend dependencies**, enable the `AI_FRONTEND_DEV` flag:
+
+```bash
+export AI_FRONTEND_DEV=true
+cd frontend
+npm run dev
+```
+
+**What this enables:**
+- All API calls automatically return mock data
+- No backend or database required
+- Perfect for UI builders like Builder.io, Figma imports, etc.
+- Realistic network delays for authentic UX testing
+- Console logs show when mock data is being used
+
+**Implementation:**
+- Use `useApi()` composable instead of direct fetch calls
+- Mock data defined in `frontend/utils/mockData.ts`
+- Automatic fallback to mock data on API failures
+- See `AGENTS.md` for detailed AI agent development guide
+
+**Example usage in components:**
+```vue
+<script setup lang="ts">
+const { get } = useApi()
+const data = await get<ResponseType>('/endpoint', 'mockKey')
+</script>
+```
 
 ## Testing
 

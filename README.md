@@ -125,7 +125,40 @@ OTEL_SERVICE_NAME=rust-backend-template
 ```env
 NUXT_PUBLIC_API_URL=http://localhost:3000
 NUXT_PUBLIC_PROJECT_NAME=My Application
+AI_FRONTEND_DEV=false
 ```
+
+### AI Frontend Development Mode
+
+For UI development, design work, or AI agent integration **without needing the backend**, enable the mock API mode:
+
+```bash
+# Set the environment variable
+export AI_FRONTEND_DEV=true
+
+# Or add to .env file
+AI_FRONTEND_DEV=true
+
+# Run the frontend
+cd frontend
+npm install
+npm run dev
+```
+
+**Benefits:**
+- ✅ No backend or database required
+- ✅ All API calls return realistic mock data
+- ✅ Works seamlessly with UI builders (Builder.io, etc.)
+- ✅ Simulated network delays for realistic testing
+- ✅ Perfect for rapid prototyping and design iteration
+
+**For AI Agents and Developers:**
+See [AGENTS.md](AGENTS.md) for comprehensive development guidelines, including:
+- Code quality checks and linting requirements
+- Dependency management
+- Translation verification procedures
+- Mock data customization
+- Testing procedures
 
 ### JWT Token Requirements
 

@@ -21,13 +21,12 @@
 
 <script setup lang="ts">
 const version = ref('0.1.0')
-const config = useRuntimeConfig()
+const { get } = useApi()
 
-// Fetch version from backend
+// Fetch version from backend or mock
 onMounted(async () => {
   try {
-    const response = await fetch(`${config.public.apiUrl}/system/version`)
-    const data = await response.json()
+    const data = await get<{ version: string }>('/system/version', 'version')
     version.value = data.version
   } catch (error) {
     console.error('Failed to fetch version:', error)
