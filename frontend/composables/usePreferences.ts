@@ -9,15 +9,16 @@ interface UserPreferences {
 
 const DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)'
 
+// Shared state across all component instances
+// Initialize with values from localStorage if available
+const theme = ref<Theme>((process.client && localStorage.getItem('theme') as Theme) || 'system')
+const savedLanguage = ref<string>((process.client && localStorage.getItem('language')) || 'en')
+
+// MediaQueryList instance for system theme detection
+let mediaQueryList: MediaQueryList | null = null
+
 export const usePreferences = () => {
   const { locale, setLocale } = useI18n()
-  
-  // Reactive state for preferences
-  const theme = ref<Theme>('system')
-  const savedLanguage = ref<string>(locale.value)
-  
-  // MediaQueryList instance for system theme detection
-  let mediaQueryList: MediaQueryList | null = null
   
   // Load preferences from localStorage
   const loadPreferences = () => {
