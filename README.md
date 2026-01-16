@@ -126,7 +126,34 @@ OTEL_SERVICE_NAME=rust-backend-template
 NUXT_PUBLIC_API_URL=http://localhost:3000
 NUXT_PUBLIC_PROJECT_NAME=My Application
 AI_FRONTEND_DEV=false
+NUXT_PUBLIC_ENABLE_URL_AUTH=false
 ```
+
+### URL-Based Authentication
+
+The frontend supports receiving JWT tokens via URL query parameters for seamless integration with external authentication systems.
+
+**Enable the feature:**
+```bash
+export NUXT_PUBLIC_ENABLE_URL_AUTH=true
+```
+
+**Usage:**
+```
+http://localhost:3000/?auth-token=your-jwt-token-here
+```
+
+**How it works:**
+1. When a user accesses the URL with `auth-token` query parameter, the plugin intercepts it
+2. The token is stored in a secure cookie named `auth-token` (7-day expiration)
+3. All subsequent API calls automatically include the token in the Authorization header
+4. The query parameter is removed from the URL for security (optional)
+
+**Security considerations:**
+- Only enable this feature when integrating with trusted authentication systems
+- Use HTTPS in production to prevent token interception
+- Tokens are stored as HttpOnly cookies when served over HTTPS
+- The feature is disabled by default
 
 ### AI Frontend Development Mode
 
@@ -167,6 +194,7 @@ The backend expects JWT tokens with the following claims:
 - `exp`: Expiration timestamp (required)
 - `email_verified`: Must be `true` (required for protected endpoints)
 - `mfa_enabled`: Must be `true` (required for protected endpoints)
+- `admin`: Must be `true` (required for admin endpoints like `/admin/roles`, `/admin/users`)
 - `email`: User email (optional, used in onboarding)
 - `name`: User full name (optional, used in onboarding)
 
@@ -176,6 +204,7 @@ The backend expects JWT tokens with the following claims:
 import jwt
 import time
 
+# Regular user token
 payload = {
     "sub": "user123",
     "exp": int(time.time()) + 3600,
@@ -185,8 +214,21 @@ payload = {
     "name": "John Doe"
 }
 
+# Admin user token (required for /admin/* endpoints)
+admin_payload = {
+    "sub": "admin123",
+    "exp": int(time.time()) + 3600,
+    "email_verified": True,
+    "mfa_enabled": True,
+    "admin": True,  # Required for admin access
+    "email": "admin@example.com",
+    "name": "Admin User"
+}
+
 token = jwt.encode(payload, "your-secret-key", algorithm="HS256")
+admin_token = jwt.encode(admin_payload, "your-secret-key", algorithm="HS256")
 print(token)
+print(admin_token)
 ```
 
 ## 🏗️ Project Structure
