@@ -118,6 +118,19 @@
 </template>
 
 <script setup lang="ts">
+interface UserProfile {
+  user: {
+    id: string
+    sub: string
+    user_email: string
+    user_fullname: string
+    organization?: string
+    properties: any
+    created_at: string
+    updated_at: string
+  }
+}
+
 const { locale, locales } = useI18n()
 const { get } = useApi()
 const { savePreferences, loadPreferences, theme, savedLanguage } = usePreferences()
@@ -147,7 +160,7 @@ onMounted(async () => {
   
   // Try to load user profile from API
   try {
-    const profileData = await get<any>('/profile', 'profile')
+    const profileData = await get<UserProfile>('/profile', 'profile')
     if (profileData?.user) {
       userName.value = profileData.user.user_fullname || 'John Doe'
       userEmail.value = profileData.user.user_email || 'user@example.com'

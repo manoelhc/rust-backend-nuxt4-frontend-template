@@ -7,12 +7,17 @@ interface UserPreferences {
   language: string
 }
 
+const DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)'
+
 export const usePreferences = () => {
   const { locale, setLocale } = useI18n()
   
   // Reactive state for preferences
   const theme = ref<Theme>('system')
   const savedLanguage = ref<string>(locale.value)
+  
+  // MediaQueryList instance for system theme detection
+  let mediaQueryList: MediaQueryList | null = null
   
   // Load preferences from localStorage
   const loadPreferences = () => {
@@ -35,13 +40,28 @@ export const usePreferences = () => {
     }
   }
   
+  // Initialize media query list
+  const initMediaQuery = () => {
+    if (process.client && !mediaQueryList) {
+      mediaQueryList = window.matchMedia(DARK_MODE_MEDIA_QUERY)
+      
+      // Listen for system theme changes
+      mediaQueryList.addEventListener('change', (e) => {
+        if (theme.value === 'system') {
+          applyTheme('system')
+        }
+      })
+    }
+  }
+  
   // Apply theme to document
   const applyTheme = (selectedTheme: Theme) => {
     if (process.client) {
       const root = document.documentElement
       
       if (selectedTheme === 'system') {
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        initMediaQuery()
+        const systemPrefersDark = mediaQueryList?.matches ?? false
         if (systemPrefersDark) {
           root.classList.add('dark')
         } else {
@@ -83,7 +103,8 @@ export const usePreferences = () => {
   const effectiveTheme = computed(() => {
     if (theme.value === 'system') {
       if (process.client) {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        initMediaQuery()
+        return mediaQueryList?.matches ? 'dark' : 'light'
       }
       return 'light'
     }
