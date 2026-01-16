@@ -25,7 +25,8 @@ export default defineNuxtConfig({
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://nginx:8070/api',
       projectName: process.env.NUXT_PUBLIC_PROJECT_NAME || 'My Application',
-      aiFrontendDev: process.env.AI_FRONTEND_DEV || 'false'
+      aiFrontendDev: process.env.AI_FRONTEND_DEV || 'false',
+      enableUrlAuth: process.env.NUXT_PUBLIC_ENABLE_URL_AUTH || 'false'
     }
   },
 
