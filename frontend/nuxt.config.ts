@@ -4,9 +4,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   
   modules: [
-    '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n'
   ],
+
+  postcss: {
+    plugins: {
+      '@tailwindcss/postcss': {}
+    }
+  },
 
   devServer: {
     port: parseInt(process.env.NUXT_PUBLIC_APP_PORT || '3000')
