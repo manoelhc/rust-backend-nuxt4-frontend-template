@@ -212,6 +212,9 @@ Access Grafana at http://localhost:3030 (admin/admin)
 2. Implement handler function
 3. Add route to router (protected or public)
 4. Update API documentation
+5. Add tests
+6. Update frontend API calls if needed
+7. Update frontend mock data if needed
 
 ### Add a new frontend page
 1. Create file in `frontend/pages/` (auto-routed)
