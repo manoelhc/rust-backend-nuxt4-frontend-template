@@ -118,11 +118,20 @@ async fn main() {
         .await
         .expect("Failed to connect to database");
 
+    let sqls = vec![include_str!("../migrations/001_create_users_table.sql")
+        .split(';')
+        .collect::<Vec<&str>>()];
+
     // Run migrations
-    sqlx::query(include_str!("../migrations/001_create_users_table.sql"))
-        .execute(&db_pool)
-        .await
-        .expect("Failed to run migrations");
+    for sql in sqls.into_iter().flatten() {
+        let trimmed_sql = sql.trim().to_string() + ";";
+        if !trimmed_sql.is_empty() {
+            sqlx::query(trimmed_sql.as_str())
+                .execute(&db_pool)
+                .await
+                .expect("Failed to run migrations");
+        }
+    }
 
     info!("Database connected and migrations applied");
 

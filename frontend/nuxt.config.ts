@@ -8,9 +8,17 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n'
   ],
 
+  devServer: {
+    port: parseInt(process.env.NUXT_PUBLIC_APP_PORT || '3000')
+  },
+
+  nitro: {
+    port: parseInt(process.env.NUXT_PUBLIC_APP_PORT || '3000')
+  },
+
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://nginx:8070/api',
       projectName: process.env.NUXT_PUBLIC_PROJECT_NAME || 'My Application',
       aiFrontendDev: process.env.AI_FRONTEND_DEV || 'false'
     }
@@ -24,7 +32,7 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'en',
     lazy: true,
-    langDir: 'locales',
+    langDir: '../locales',
     strategy: 'no_prefix',
     detectBrowserLanguage: {
       useCookie: true,

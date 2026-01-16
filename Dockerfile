@@ -1,22 +1,24 @@
 # Build stage
-FROM rust:1.83 AS builder
+FROM rust:1.92-slim-trixie AS builder
 
 WORKDIR /app
 
 # Copy manifests
 COPY Cargo.toml Cargo.lock ./
 
-# Create a dummy source to build dependencies
-RUN mkdir src && echo "fn main() {}" > src/main.rs && cargo build --release && rm -rf src
+# Caching dependencies
+#RUN mkdir src && echo "fn main() {}" > src/main.rs && cargo build --release && rm -rf src
 
 # Copy source code
 COPY src ./src
 
-# Touch main.rs to force rebuild and build the application
-RUN touch src/main.rs && cargo build --release
+# Copy migrations
+COPY migrations ./migrations
+
+RUN cargo build --release
 
 # Runtime stage
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
