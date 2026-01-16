@@ -7,11 +7,6 @@
 @source "../../app.vue";
 @source "../../node_modules/flowbite/**/*.{js,ts}";
 
-@theme {
-  --color-*: initial;
-  --font-*: initial;
-}
-
 @layer base {
   :root {
     color-scheme: light dark;
