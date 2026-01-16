@@ -110,23 +110,24 @@ async fn validate_token(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<ValidateTokenRequest>,
 ) -> impl IntoResponse {
-    let validation = Validation::default();
-    let token_data = decode::<Claims>(
-        &payload.token,
-        &DecodingKey::from_secret(state.jwt_secret.as_ref()),
-        &validation,
-    );
+    let is_valid = validate_jwt_token(&payload.token, &state.jwt_secret);
 
-    match token_data {
-        Ok(_) => Json(ValidateTokenResponse {
+    if is_valid {
+        Json(ValidateTokenResponse {
             valid: true,
             message: "Token is valid".to_string(),
-        }),
-        Err(_) => Json(ValidateTokenResponse {
+        })
+    } else {
+        Json(ValidateTokenResponse {
             valid: false,
             message: "Token is invalid or expired".to_string(),
-        }),
+        })
     }
+}
+
+fn validate_jwt_token(token: &str, secret: &str) -> bool {
+    let validation = Validation::default();
+    decode::<Claims>(token, &DecodingKey::from_secret(secret.as_ref()), &validation).is_ok()
 }
 
 async fn system_uptime(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -174,14 +175,7 @@ async fn auth_middleware(
 
     if let Some(auth_header) = auth_header {
         if let Some(token) = auth_header.strip_prefix("Bearer ") {
-            let validation = Validation::default();
-            if decode::<Claims>(
-                token,
-                &DecodingKey::from_secret(state.jwt_secret.as_ref()),
-                &validation,
-            )
-            .is_ok()
-            {
+            if validate_jwt_token(token, &state.jwt_secret) {
                 return Ok(next.run(req).await);
             }
         }
