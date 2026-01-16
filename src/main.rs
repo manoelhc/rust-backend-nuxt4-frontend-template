@@ -88,7 +88,9 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind(&addr)
         .await
-        .expect(&format!("Failed to bind to {}. Check if the port is already in use or if you have permission to bind to it.", addr));
+        .unwrap_or_else(|e| {
+            panic!("Failed to bind to {}: {}. Check if the port is already in use or if you have permission to bind to it.", addr, e);
+        });
 
     info!("Server starting on http://{}", addr);
 
@@ -128,9 +130,14 @@ async fn validate_token(
 }
 
 async fn system_uptime(State(state): State<Arc<AppState>>) -> impl IntoResponse {
-    let uptime = SystemTime::now()
-        .duration_since(state.start_time)
-        .unwrap_or(Duration::from_secs(0));
+    let uptime = match SystemTime::now().duration_since(state.start_time) {
+        Ok(duration) => duration,
+        Err(_) => {
+            // System clock went backwards, log warning and report 0 uptime
+            tracing::warn!("System clock appears to have gone backwards");
+            Duration::from_secs(0)
+        }
+    };
 
     let seconds = uptime.as_secs();
     let days = seconds / 86400;
