@@ -74,6 +74,8 @@ async fn main() {
             auth_middleware,
         ));
 
+    // Note: CorsLayer::permissive() is used for development convenience.
+    // In production, restrict CORS to specific origins using CorsLayer::new()
     let app = Router::new()
         .route("/health", get(health_check))
         .route("/validate-token", post(validate_token))
@@ -86,11 +88,13 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind(&addr)
         .await
-        .unwrap();
+        .expect(&format!("Failed to bind to {}. Check if the port is already in use or if you have permission to bind to it.", addr));
 
     info!("Server starting on http://{}", addr);
 
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app)
+        .await
+        .expect("Failed to start server");
 }
 
 async fn health_check() -> impl IntoResponse {

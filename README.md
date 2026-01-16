@@ -193,6 +193,36 @@ cd frontend
 npm run dev
 ```
 
+## Production Considerations
+
+### CORS Configuration
+The backend uses `CorsLayer::permissive()` which allows all origins for development convenience. For production, update `src/main.rs` to restrict CORS to specific origins:
+
+```rust
+use tower_http::cors::CorsLayer;
+use http::Method;
+
+// Replace CorsLayer::permissive() with:
+let cors = CorsLayer::new()
+    .allow_origin("https://your-frontend-domain.com".parse::<HeaderValue>().unwrap())
+    .allow_methods([Method::GET, Method::POST])
+    .allow_headers([http::header::AUTHORIZATION, http::header::CONTENT_TYPE]);
+
+let app = Router::new()
+    // ... routes ...
+    .layer(cors)
+    .with_state(state);
+```
+
+### JWT Secret
+Always use a strong, randomly generated JWT secret in production:
+```bash
+# Generate a secure secret (example using openssl)
+openssl rand -base64 32
+```
+
+Set this in your environment or Docker secrets, never commit it to version control.
+
 ## Building for Production
 
 ### Backend

@@ -30,8 +30,5 @@ COPY --from=builder /app/target/release/rust-backend-template /app/rust-backend-
 # Expose the port
 EXPOSE 3000
 
-# Set environment variables
-ENV JWT_SECRET=my-secret-key
-
 # Run the binary
 CMD ["/app/rust-backend-template"]
