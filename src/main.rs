@@ -696,37 +696,8 @@ async fn update_role(
     Path(role_id): Path<Uuid>,
     Json(payload): Json<UpdateRoleRequest>,
 ) -> Result<Json<Role>, (StatusCode, Json<ErrorResponse>)> {
-    // Build dynamic update query
-    let mut query = "UPDATE roles SET updated_at = NOW()".to_string();
-    let mut has_updates = false;
-
-    if payload.name.is_some() {
-        query.push_str(", name = $2");
-        has_updates = true;
-    }
-    if payload.description.is_some() {
-        query.push_str(if has_updates {
-            ", description = $3"
-        } else {
-            ", description = $2"
-        });
-        has_updates = true;
-    }
-    if payload.is_admin.is_some() {
-        let idx = if payload.name.is_some() && payload.description.is_some() {
-            4
-        } else if payload.name.is_some() || payload.description.is_some() {
-            3
-        } else {
-            2
-        };
-        query.push_str(&format!(", is_admin = ${}", idx));
-        has_updates = true;
-    }
-
-    query.push_str(" WHERE id = $1 RETURNING *");
-
-    if !has_updates {
+    // Validate that at least one field is provided
+    if payload.name.is_none() && payload.description.is_none() && payload.is_admin.is_none() {
         return Err((
             StatusCode::BAD_REQUEST,
             Json(ErrorResponse {
@@ -735,19 +706,47 @@ async fn update_role(
         ));
     }
 
-    let mut q = sqlx::query_as::<_, Role>(&query).bind(role_id);
+    // Get current role to use as defaults for unspecified fields
+    let current_role: Option<Role> = sqlx::query_as::<_, Role>("SELECT * FROM roles WHERE id = $1")
+        .bind(role_id)
+        .fetch_optional(&state.db_pool)
+        .await
+        .map_err(|e| {
+            tracing::error!("Database error: {}", e);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(ErrorResponse {
+                    error: "Database error".to_string(),
+                }),
+            )
+        })?;
 
-    if let Some(name) = payload.name {
-        q = q.bind(name);
-    }
-    if let Some(description) = payload.description {
-        q = q.bind(description);
-    }
-    if let Some(is_admin) = payload.is_admin {
-        q = q.bind(is_admin);
-    }
+    let current_role = current_role.ok_or_else(|| {
+        (
+            StatusCode::NOT_FOUND,
+            Json(ErrorResponse {
+                error: "Role not found".to_string(),
+            }),
+        )
+    })?;
 
-    let role: Role = q.fetch_one(&state.db_pool).await.map_err(|e| {
+    // Use provided values or fall back to current values
+    let name = payload.name.unwrap_or(current_role.name);
+    let description = payload.description.or(current_role.description);
+    let is_admin = payload.is_admin.unwrap_or(current_role.is_admin);
+
+    // Update with all fields
+    let role: Role = sqlx::query_as::<_, Role>(
+        "UPDATE roles SET name = $2, description = $3, is_admin = $4, updated_at = NOW() 
+         WHERE id = $1 RETURNING *"
+    )
+    .bind(role_id)
+    .bind(name)
+    .bind(description)
+    .bind(is_admin)
+    .fetch_one(&state.db_pool)
+    .await
+    .map_err(|e| {
         tracing::error!("Failed to update role: {}", e);
         (
             StatusCode::INTERNAL_SERVER_ERROR,
