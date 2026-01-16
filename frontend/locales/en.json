@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "projectName": "My Application",
+    "language": "Language",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "support": "Support",
+    "preferences": "Preferences",
+    "logout": "Logout"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome to the Dashboard",
+      "description": "This is your main dashboard where you can see an overview of your system."
+    },
+    "support": {
+      "title": "Support",
+      "description": "Get help and support for your application."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "version": "Version"
+  }
+}

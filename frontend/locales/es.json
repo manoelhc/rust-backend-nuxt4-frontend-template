@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "projectName": "Mi Aplicación",
+    "language": "Idioma",
+    "darkMode": "Modo Oscuro",
+    "lightMode": "Modo Claro"
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "support": "Soporte",
+    "preferences": "Preferencias",
+    "logout": "Cerrar Sesión"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Panel",
+      "welcome": "Bienvenido al Panel",
+      "description": "Este es tu panel principal donde puedes ver una descripción general de tu sistema."
+    },
+    "support": {
+      "title": "Soporte",
+      "description": "Obtén ayuda y soporte para tu aplicación."
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "version": "Versión"
+  }
+}
