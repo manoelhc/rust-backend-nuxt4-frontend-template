@@ -20,6 +20,24 @@
     "support": {
       "title": "Suporte",
       "description": "Obtenha ajuda e suporte para sua aplicação."
+    },
+    "preferences": {
+      "title": "Preferências",
+      "description": "Gerencie suas configurações de conta e preferências.",
+      "userInfo": "Informações do Usuário",
+      "name": "Nome",
+      "email": "E-mail",
+      "languageSettings": "Configurações de Idioma",
+      "preferredLanguage": "Idioma Preferido",
+      "languageDescription": "Selecione seu idioma preferido para a interface.",
+      "themeSettings": "Configurações de Tema",
+      "preferredTheme": "Tema Preferido",
+      "themeDescription": "Escolha seu tema de cores preferido.",
+      "themeLight": "Claro",
+      "themeDark": "Escuro",
+      "themeSystem": "Sistema",
+      "saveChanges": "Salvar Alterações",
+      "changesSaved": "Suas preferências foram salvas com sucesso!"
     }
   },
   "common": {

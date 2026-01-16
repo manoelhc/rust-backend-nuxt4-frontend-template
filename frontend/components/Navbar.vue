@@ -41,7 +41,7 @@
                 <li v-for="loc in locales" :key="loc.code">
                   <a
                     href="#"
-                    @click.prevent="setLocale(loc.code)"
+                    @click.prevent="setLocaleAndSave(loc.code)"
                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
                     {{ loc.name }}
@@ -74,8 +74,8 @@
 const { locale, locales, setLocale } = useI18n()
 const config = useRuntimeConfig()
 const projectName = config.public.projectName
+const { loadPreferences, saveTheme, saveLanguage, effectiveTheme } = usePreferences()
 
-const isDark = ref(false)
 const showLangDropdown = ref(false)
 
 const currentLocale = computed(() => locale.value)
@@ -84,16 +84,11 @@ const currentLocaleName = computed(() => {
   return loc?.name || 'English'
 })
 
+const isDark = computed(() => effectiveTheme.value === 'dark')
+
 onMounted(() => {
-  // Check for saved theme preference or default to system preference
-  const savedTheme = localStorage.getItem('theme')
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  
-  isDark.value = savedTheme === 'dark' || (!savedTheme && systemPrefersDark)
-  
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-  }
+  // Load preferences (theme and language)
+  loadPreferences()
 
   // Close dropdown when clicking outside
   document.addEventListener('click', (e) => {
@@ -105,19 +100,19 @@ onMounted(() => {
 })
 
 function toggleDarkMode() {
-  isDark.value = !isDark.value
-  
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
+  // Toggle between light and dark (not system)
+  const newTheme = isDark.value ? 'light' : 'dark'
+  saveTheme(newTheme)
 }
 
 function toggleLangDropdown() {
   showLangDropdown.value = !showLangDropdown.value
+}
+
+function setLocaleAndSave(code: string) {
+  setLocale(code)
+  saveLanguage(code)
+  showLangDropdown.value = false
 }
 
 function toggleSidebar() {

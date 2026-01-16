@@ -20,6 +20,24 @@
     "support": {
       "title": "Support",
       "description": "Get help and support for your application."
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Manage your account settings and preferences.",
+      "userInfo": "User Information",
+      "name": "Name",
+      "email": "Email",
+      "languageSettings": "Language Settings",
+      "preferredLanguage": "Preferred Language",
+      "languageDescription": "Select your preferred language for the interface.",
+      "themeSettings": "Theme Settings",
+      "preferredTheme": "Preferred Theme",
+      "themeDescription": "Choose your preferred color theme.",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System",
+      "saveChanges": "Save Changes",
+      "changesSaved": "Your preferences have been saved successfully!"
     }
   },
   "common": {
