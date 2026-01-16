@@ -1,7 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  color-scheme: light dark;
+@source "../../components/**/*.{js,vue,ts}";
+@source "../../layouts/**/*.vue";
+@source "../../pages/**/*.vue";
+@source "../../plugins/**/*.{js,ts}";
+@source "../../app.vue";
+@source "../../node_modules/flowbite/**/*.{js,ts}";
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
 }
+
+@plugin "flowbite/plugin";
