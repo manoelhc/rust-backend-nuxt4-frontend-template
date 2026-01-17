@@ -14,3 +14,8 @@ logs:
 
 build:
 	docker-compose build --no-cache
+
+token:
+	@cd tools/jwt-generator && cargo run --quiet -- $(ARGS)
+
+.PHONY: run up stop down logs build token

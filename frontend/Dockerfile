@@ -2,6 +2,7 @@
 FROM node:20-alpine as builder
 
 ARG NUXT_PUBLIC_APP_PORT=3000
+ARG NUXT_PUBLIC_ENABLE_URL_AUTH=false
 
 WORKDIR /app
 

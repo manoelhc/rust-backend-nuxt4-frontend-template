@@ -9,6 +9,9 @@
     "dashboard": "Panel",
     "support": "Soporte",
     "preferences": "Preferencias",
+    "admin": "Administración",
+    "roles": "Roles",
+    "users": "Usuarios",
     "logout": "Cerrar Sesión"
   },
   "pages": {
@@ -38,6 +41,54 @@
       "themeSystem": "Sistema",
       "saveChanges": "Guardar Cambios",
       "changesSaved": "¡Tus preferencias se guardaron correctamente!"
+    },
+    "admin": {
+      "roles": {
+        "title": "Gestión de Roles",
+        "description": "Administra los roles del sistema y sus permisos.",
+        "createRole": "Crear Rol",
+        "editRole": "Editar Rol",
+        "deleteRole": "Eliminar Rol",
+        "roleName": "Nombre del Rol",
+        "roleDescription": "Descripción",
+        "isAdmin": "Es Administrador",
+        "permissions": "Permisos",
+        "permissionMatrix": "Matriz de Permisos",
+        "page": "Página",
+        "canView": "Puede Ver",
+        "canEdit": "Puede Editar",
+        "canViewOwn": "Puede Ver Propios",
+        "canEditOwn": "Puede Editar Propios",
+        "canViewOurs": "Puede Ver Nuestros",
+        "canEditOurs": "Puede Editar Nuestros",
+        "pages": {
+          "dashboard": "Panel",
+          "users": "Usuarios",
+          "roles": "Roles",
+          "profile": "Perfil",
+          "preferences": "Preferencias",
+          "support": "Soporte"
+        },
+        "confirmDelete": "¿Estás seguro de que deseas eliminar este rol?",
+        "deleteSuccess": "Rol eliminado con éxito",
+        "createSuccess": "Rol creado con éxito",
+        "updateSuccess": "Rol actualizado con éxito",
+        "permissionUpdateSuccess": "Permisos actualizados con éxito"
+      },
+      "users": {
+        "title": "Gestión de Usuarios",
+        "description": "Administra roles y permisos de usuarios.",
+        "userName": "Nombre",
+        "userEmail": "Correo Electrónico",
+        "userRoles": "Roles",
+        "assignRole": "Asignar Rol",
+        "removeRole": "Quitar Rol",
+        "noRoles": "No hay roles asignados",
+        "selectRole": "Selecciona un rol",
+        "assignSuccess": "Rol asignado con éxito",
+        "removeSuccess": "Rol removido con éxito",
+        "noUsers": "No se encontraron usuarios"
+      }
     }
   },
   "common": {
@@ -45,6 +96,13 @@
     "error": "Ocurrió un error",
     "save": "Guardar",
     "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "close": "Cerrar",
+    "actions": "Acciones",
+    "yes": "Sí",
+    "no": "No",
     "version": "Versión"
   }
 }

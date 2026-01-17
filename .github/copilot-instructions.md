@@ -68,7 +68,14 @@ This is a monorepo template containing:
 ```
 .
 ├── src/                    # Rust backend source
-│   └── main.rs            # Main application entry point
+│   ├── main.rs            # Application entry point and route configuration
+│   ├── models.rs          # Data structures and type definitions
+│   ├── middleware.rs      # Authentication and authorization middleware
+│   ├── migrations.rs      # SQL migration parser with PostgreSQL support
+│   └── handlers/          # Request handlers by domain
+│       ├── mod.rs         # Module exports
+│       ├── system.rs      # System endpoints (health, version, uptime, profile)
+│       └── admin.rs       # Admin endpoints (roles and users management)
 ├── migrations/            # Database migrations
 ├── frontend/              # Nuxt 4 frontend
 │   ├── app/              # App entry point
@@ -84,6 +91,42 @@ This is a monorepo template containing:
 ├── nginx.conf            # Nginx gateway configuration
 └── Cargo.toml            # Rust dependencies
 ```
+
+## Backend Code Organization
+
+The backend follows a modular architecture for better maintainability:
+
+### Module Structure
+
+**`models.rs`** - All data structures
+- Database models (User, Role, Permission, etc.)
+- Request/response types
+- Application state
+
+**`middleware.rs`** - Authentication & Authorization
+- JWT token validation
+- `auth_middleware` - Protected routes
+- `admin_middleware` - Admin-only routes
+- Claims extractor
+
+**`migrations.rs`** - Database migrations
+- SQL parser supporting PostgreSQL syntax
+- Handles DO $$ ... END $$; blocks
+- Comprehensive test coverage
+
+**`handlers/system.rs`** - System endpoints
+- Public: health, version, validate_token
+- Protected: uptime, onboarding, profile
+
+**`handlers/admin.rs`** - Admin endpoints
+- Role management (CRUD)
+- Permission management
+- User role assignment
+
+**`main.rs`** - Application bootstrap
+- Server initialization
+- Route registration
+- Middleware configuration
 
 ## Environment Variables
 
@@ -185,6 +228,39 @@ docker-compose -f docker-compose.yml -f docker-compose.observability.yml up -d
 - Must have `mfa_enabled: true`
 - Optional: `email`, `name` for user info
 
+### JWT Token Generation for Testing
+
+The project includes a JWT token generator tool for development and testing:
+
+```bash
+# Generate a regular user token
+make token
+
+# Generate an admin token (for /admin/* endpoints)
+make token ARGS="--admin"
+
+# Generate a custom token
+make token ARGS="--sub testuser --email test@example.com --name 'Test User'"
+```
+
+All available options:
+- `--sub <ID>` - Subject/User ID
+- `--email <EMAIL>` - User email
+- `--name <NAME>` - User full name
+- `--email-verified <true|false>` - Email verification status
+- `--mfa-enabled <true|false>` - MFA status
+- `--admin` - Mark user as admin
+- `--expires-in <HOURS>` - Token expiration in hours
+- `--secret <SECRET>` - JWT secret (overrides .env)
+
+The tool automatically uses the `JWT_SECRET` from your `.env` file and outputs:
+- The generated JWT token
+- All claims in human-readable format
+- Expiration time
+- Usage instructions
+
+See `tools/jwt-generator/README.md` for complete documentation.
+
 ## i18n
 
 All user-facing text must be internationalized. Supported languages:
@@ -208,13 +284,137 @@ Access Grafana at http://localhost:3030 (admin/admin)
 ## Common Tasks
 
 ### Add a new endpoint
-1. Define response/request structs in `src/main.rs`
-2. Implement handler function
-3. Add route to router (protected or public)
+
+**For system endpoints:**
+1. Add models to `src/models.rs`
+2. Add handler to `src/handlers/system.rs`
+3. Register route in `src/main.rs` (public or protected routes)
 4. Update API documentation
 5. Add tests
 6. Update frontend API calls if needed
 7. Update frontend mock data if needed
+
+**For admin endpoints:**
+1. Add models to `src/models.rs`
+2. Add handler to `src/handlers/admin.rs`
+3. Register route in `src/main.rs` (admin routes)
+4. Update API documentation
+5. Add tests
+6. Update frontend API calls if needed
+7. Update frontend mock data if needed
+
+**For new domain (e.g., reports):**
+1. Create `src/handlers/domain.rs`
+2. Add models to `src/models.rs`
+3. Export in `src/handlers/mod.rs`
+4. Add handlers to new module
+5. Register routes in `src/main.rs`
+
+**Example - Adding an admin endpoint:**
+```rust
+// 1. In src/models.rs
+#[derive(Deserialize)]
+pub struct MyRequest {
+    pub field: String,
+}
+
+#[derive(Serialize)]
+pub struct MyResponse {
+    pub result: String,
+}
+
+// 2. In src/handlers/admin.rs
+pub async fn my_handler(
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<MyRequest>,
+) -> Result<Json<MyResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Implementation
+    Ok(Json(MyResponse { result: "success".to_string() }))
+}
+
+// 3. In src/main.rs
+let admin_routes = Router::new()
+    .route("/admin/my-endpoint", post(admin::my_handler))
+    // ... other routes
+```
+
+## Multi-Tenancy (Organization Isolation)
+
+**CRITICAL:** The application implements strict multi-tenancy. All data MUST be isolated by organization.
+
+### Database Table Requirements
+
+**ALL tables MUST include `organization_id`:**
+
+```sql
+CREATE TABLE IF NOT EXISTS my_table (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,  -- REQUIRED
+    -- ... other columns ...
+);
+
+CREATE INDEX IF NOT EXISTS idx_my_table_organization_id ON my_table(organization_id);
+```
+
+### Query Requirements
+
+**ALL queries MUST filter by `organization_id`:**
+
+```rust
+// ❌ WRONG
+SELECT * FROM users;
+
+// ✅ CORRECT
+SELECT * FROM users WHERE organization_id = $1;
+```
+
+### JWT Claims
+
+Extract organization from JWT claims:
+
+```rust
+pub struct Claims {
+    pub organization: Option<String>,  // Organization name
+    // ... other fields
+}
+```
+
+### Handler Pattern
+
+```rust
+pub async fn handler(
+    State(state): State<Arc<AppState>>,
+    claims: Claims,
+) -> Result<Json<Response>, (StatusCode, Json<ErrorResponse>)> {
+    // Get organization_id from claims
+    let org_id: Option<Uuid> = if let Some(org) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org)
+            .fetch_optional(&state.db_pool)
+            .await.ok().flatten()
+    } else {
+        None
+    };
+
+    // Query with organization filter
+    let data = sqlx::query_as::<_, Model>(
+        "SELECT * FROM table WHERE organization_id = $1"
+    )
+    .bind(org_id)
+    .fetch_all(&state.db_pool)
+    .await?;
+
+    Ok(Json(data))
+}
+```
+
+### Testing
+
+Generate tokens with organization:
+
+```bash
+make token ARGS="--organization Acme --email user@acme.com"
+```
 
 ### Add a new frontend page
 1. Create file in `frontend/pages/` (auto-routed)
@@ -224,8 +424,12 @@ Access Grafana at http://localhost:3030 (admin/admin)
 
 ### Add a database table
 1. Create migration in `migrations/XXX_description.sql`
-2. Add corresponding Rust struct with `sqlx::FromRow`
-3. Test with `cargo test`
+2. **MUST include `organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE`**
+3. **MUST create index on `organization_id`**
+4. **MUST include organization_id in unique constraints**
+5. Add corresponding Rust struct with `sqlx::FromRow` and `organization_id` field
+6. **MUST filter all queries by `organization_id`**
+7. Test with `cargo test`
 
 ## Security Guidelines
 
