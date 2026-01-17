@@ -12,10 +12,27 @@ export const useApi = () => {
   
   /**
    * Get the JWT token from cookie if available
+   * Reads directly from document.cookie on client side for reliability
    */
   const getAuthToken = () => {
-    const cookie = useCookie('auth-token') || useCookie('token')
-    return cookie.value || null
+    // On server side or during SSR, use useCookie
+    if (process.server) {
+      const cookie = useCookie('auth-token') || useCookie('auth-token')
+      return cookie.value || null
+    }
+    
+    // On client side, read directly from document.cookie
+    if (process.client && typeof document !== 'undefined') {
+      const cookies = document.cookie.split(';')
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=')
+        if (name === 'auth-token') {
+          return decodeURIComponent(value)
+        }
+      }
+    }
+    
+    return null
   }
   
   /**
@@ -29,6 +46,9 @@ export const useApi = () => {
     const token = getAuthToken()
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
+      console.log('[useApi] Added Authorization header with token')
+    } else {
+      console.warn('[useApi] No auth token found in cookies')
     }
     
     return headers
