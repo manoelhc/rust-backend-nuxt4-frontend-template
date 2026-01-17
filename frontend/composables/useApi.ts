@@ -17,7 +17,7 @@ export const useApi = () => {
   const getAuthToken = () => {
     // On server side or during SSR, use useCookie
     if (process.server) {
-      const cookie = useCookie('auth-token') || useCookie('auth-token')
+      const cookie = useCookie('auth-token') || useCookie('token')
       return cookie.value || null
     }
     
