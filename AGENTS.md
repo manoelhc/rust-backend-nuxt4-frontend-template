@@ -66,6 +66,44 @@ const profile = await authenticatedRequest<ProfileType>(
 </script>
 ```
 
+### JWT Token Generation
+
+For testing and development, the project includes a built-in JWT token generator that works with your `.env` configuration:
+
+```bash
+# Generate a regular user token
+make token
+
+# Generate an admin token
+make token ARGS="--admin"
+
+# Generate a custom token with specific claims
+make token ARGS="--sub testuser --email test@example.com --name 'Test User' --admin"
+```
+
+**Common use cases:**
+
+```bash
+# Token for testing protected endpoints
+make token
+
+# Token for testing admin endpoints (/admin/roles, /admin/users)
+make token ARGS="--admin --email admin@company.com --name 'Admin User'"
+
+# Token with longer expiration (48 hours)
+make token ARGS="--expires-in 48"
+
+# Token without email verification or MFA (for testing error cases)
+make token ARGS="--email-verified false --mfa-enabled false"
+```
+
+The generated token includes:
+- All claims (sub, exp, email_verified, mfa_enabled, admin, email, name)
+- Expiration time in human-readable format
+- Usage instructions for both Authorization header and URL parameter
+
+See `tools/jwt-generator/README.md` for full documentation.
+
 ## Backend Code Organization
 
 The Rust backend follows a modular structure for maintainability and clarity:

@@ -108,6 +108,29 @@ npm run dev
 # The frontend will be available at http://localhost:3000
 ```
 
+### Makefile Commands
+
+The project includes a Makefile with useful commands for development:
+
+```bash
+# Start all services with Docker Compose
+make run        # or: make up
+
+# Stop all services
+make stop       # or: make down
+
+# View logs
+make logs
+
+# Rebuild containers
+make build
+
+# Generate JWT token for testing
+make token                                                  # Regular user token
+make token ARGS="--admin"                                  # Admin token
+make token ARGS="--sub user123 --email user@example.com"  # Custom token
+```
+
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -197,6 +220,59 @@ The backend expects JWT tokens with the following claims:
 - `admin`: Must be `true` (required for admin endpoints like `/admin/roles`, `/admin/users`)
 - `email`: User email (optional, used in onboarding)
 - `name`: User full name (optional, used in onboarding)
+
+#### JWT Token Generator (Built-in Tool)
+
+The project includes a built-in JWT token generator for development and testing. It automatically uses the `JWT_SECRET` from your `.env` file.
+
+**Generate a regular user token:**
+```bash
+make token
+```
+
+**Generate an admin token:**
+```bash
+make token ARGS="--admin"
+```
+
+**Generate a custom token:**
+```bash
+make token ARGS="--sub admin123 --email admin@example.com --name 'Admin User' --admin"
+```
+
+**All available options:**
+- `--sub <ID>` - Subject/User ID (default: user123)
+- `--email <EMAIL>` - User email
+- `--name <NAME>` - User full name
+- `--email-verified <true|false>` - Email verification status (default: true)
+- `--mfa-enabled <true|false>` - MFA status (default: true)
+- `--admin` - Mark user as admin (default: false)
+- `--expires-in <HOURS>` - Token expiration in hours (default: 24)
+- `--secret <SECRET>` - JWT secret (overrides .env)
+
+**Example output:**
+```
+=== JWT Token Generated ===
+
+Token:
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+
+=== Claims ===
+Subject (sub):     admin123
+Email:             admin@example.com
+Name:              Admin User
+Email Verified:    true
+MFA Enabled:       true
+Admin:             true
+Expires:           2026-01-18 09:11:50 UTC (in 24 hours)
+
+=== Usage ===
+You can use this token in:
+1. Authorization header: Bearer <token>
+2. URL parameter: http://localhost:3000/?auth-token=<token>
+```
+
+See `tools/jwt-generator/README.md` for more details.
 
 #### Example JWT Token Generation (Python)
 

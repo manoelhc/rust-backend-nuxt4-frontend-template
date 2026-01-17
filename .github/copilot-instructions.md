@@ -228,6 +228,39 @@ docker-compose -f docker-compose.yml -f docker-compose.observability.yml up -d
 - Must have `mfa_enabled: true`
 - Optional: `email`, `name` for user info
 
+### JWT Token Generation for Testing
+
+The project includes a JWT token generator tool for development and testing:
+
+```bash
+# Generate a regular user token
+make token
+
+# Generate an admin token (for /admin/* endpoints)
+make token ARGS="--admin"
+
+# Generate a custom token
+make token ARGS="--sub testuser --email test@example.com --name 'Test User'"
+```
+
+All available options:
+- `--sub <ID>` - Subject/User ID
+- `--email <EMAIL>` - User email
+- `--name <NAME>` - User full name
+- `--email-verified <true|false>` - Email verification status
+- `--mfa-enabled <true|false>` - MFA status
+- `--admin` - Mark user as admin
+- `--expires-in <HOURS>` - Token expiration in hours
+- `--secret <SECRET>` - JWT secret (overrides .env)
+
+The tool automatically uses the `JWT_SECRET` from your `.env` file and outputs:
+- The generated JWT token
+- All claims in human-readable format
+- Expiration time
+- Usage instructions
+
+See `tools/jwt-generator/README.md` for complete documentation.
+
 ## i18n
 
 All user-facing text must be internationalized. Supported languages:
