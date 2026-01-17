@@ -14,7 +14,7 @@ export const useApi = () => {
    * Get the JWT token from cookie if available
    */
   const getAuthToken = () => {
-    const cookie = useCookie('auth-token')
+    const cookie = useCookie('auth-token') || useCookie('token')
     return cookie.value || null
   }
   
