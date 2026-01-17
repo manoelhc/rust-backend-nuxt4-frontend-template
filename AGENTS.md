@@ -66,6 +66,107 @@ const profile = await authenticatedRequest<ProfileType>(
 </script>
 ```
 
+## Backend Code Organization
+
+The Rust backend follows a modular structure for maintainability and clarity:
+
+### File Structure
+
+```
+src/
+├── main.rs              # Application entry point and route configuration
+├── models.rs            # Data structures and type definitions
+├── middleware.rs        # Authentication and authorization middleware
+├── migrations.rs        # SQL migration parser with PostgreSQL support
+└── handlers/            # Request handlers organized by domain
+    ├── mod.rs           # Module exports
+    ├── system.rs        # System endpoints (health, version, uptime, profile)
+    └── admin.rs         # Admin endpoints (roles and users management)
+```
+
+### Module Responsibilities
+
+**`models.rs`**
+- All structs and data models
+- Request/response types
+- Database models (User, Role, Permission, etc.)
+- Application state (AppState)
+
+**`middleware.rs`**
+- JWT token validation
+- Authentication middleware (`auth_middleware`)
+- Admin authorization middleware (`admin_middleware`)
+- Claims extractor implementation
+
+**`migrations.rs`**
+- SQL statement parser respecting PostgreSQL syntax
+- Handles DO $$ ... END $$; blocks correctly
+- Comprehensive test suite for parser
+
+**`handlers/system.rs`**
+- Public endpoints: `health_check`, `system_version`, `validate_token`
+- Protected endpoints: `system_uptime`, `system_onboarding`, `get_profile`
+- Basic system operations
+
+**`handlers/admin.rs`**
+- Role management: CRUD operations for roles
+- Permission management: Setting page-level permissions
+- User management: Listing users, assigning/removing roles
+- Admin-only operations
+
+**`main.rs`**
+- Application initialization
+- Database connection and migration execution
+- Route configuration and middleware setup
+- Server startup
+
+### Adding New Functionality
+
+**For system-level features:**
+1. Add models to `models.rs`
+2. Add handler to `handlers/system.rs`
+3. Register route in `main.rs`
+
+**For admin features:**
+1. Add models to `models.rs`
+2. Add handler to `handlers/admin.rs`
+3. Register route in `main.rs` under admin routes
+
+**For new domains (e.g., reports, analytics):**
+1. Create `handlers/domain_name.rs`
+2. Add models to `models.rs`
+3. Export in `handlers/mod.rs`
+4. Register routes in `main.rs`
+
+### Example: Adding a New Admin Endpoint
+
+```rust
+// 1. Add request/response models to models.rs
+#[derive(Deserialize)]
+pub struct MyRequest {
+    pub field: String,
+}
+
+#[derive(Serialize)]
+pub struct MyResponse {
+    pub result: String,
+}
+
+// 2. Add handler to handlers/admin.rs
+pub async fn my_handler(
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<MyRequest>,
+) -> Result<Json<MyResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Implementation
+    Ok(Json(MyResponse { result: "success".to_string() }))
+}
+
+// 3. Register in main.rs
+let admin_routes = Router::new()
+    .route("/admin/my-endpoint", post(admin::my_handler))
+    // ... other routes
+```
+
 ## Development Workflow
 
 ### 1. Code Quality Checks
