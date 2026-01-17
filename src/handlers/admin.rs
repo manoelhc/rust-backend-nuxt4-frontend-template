@@ -8,8 +8,8 @@ use uuid::Uuid;
 
 use crate::models::{
     AppState, AssignRoleRequest, Claims, CreateRoleRequest, ErrorResponse, PaginationQuery,
-    Permission, Role, RoleWithPermissions, SetPermissionRequest, UpdateRoleRequest, User,
-    UserRole, UserWithRoles,
+    Permission, Role, RoleWithPermissions, SetPermissionRequest, UpdateRoleRequest, User, UserRole,
+    UserWithRoles,
 };
 
 // ==================== Role Management ====================
@@ -174,7 +174,7 @@ pub async fn update_role(
     // Update with all fields
     let role: Role = sqlx::query_as::<_, Role>(
         "UPDATE roles SET name = $2, description = $3, is_admin = $4, updated_at = NOW() 
-         WHERE id = $1 RETURNING *"
+         WHERE id = $1 RETURNING *",
     )
     .bind(role_id)
     .bind(name)

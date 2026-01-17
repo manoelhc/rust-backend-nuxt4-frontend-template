@@ -5,6 +5,7 @@ use axum::{
 };
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
+use uuid::Uuid;
 
 use crate::middleware::validate_jwt_token_with_claims;
 use crate::models::{
@@ -139,17 +140,31 @@ pub async fn system_onboarding(
         .name
         .clone()
         .unwrap_or_else(|| "Unknown User".to_string());
+    let organization = claims.organization.clone();
+
+    // Try to find organization_id if organization name is provided
+    let organization_id: Option<Uuid> = if let Some(org_name) = &organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org_name)
+            .fetch_optional(&state.db_pool)
+            .await
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
 
     // Create new user
     let new_user: User = sqlx::query_as::<_, User>(
-        "INSERT INTO users (sub, user_email, user_fullname, organization, properties) 
-         VALUES ($1, $2, $3, $4, $5) 
+        "INSERT INTO users (sub, user_email, user_fullname, organization, organization_id, properties) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
          RETURNING *",
     )
     .bind(sub)
     .bind(&user_email)
     .bind(&user_fullname)
-    .bind::<Option<String>>(None)
+    .bind(&organization)
+    .bind(organization_id)
     .bind(serde_json::json!({}))
     .fetch_one(&state.db_pool)
     .await

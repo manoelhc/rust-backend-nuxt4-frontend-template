@@ -205,6 +205,143 @@ let admin_routes = Router::new()
     // ... other routes
 ```
 
+## Multi-Tenancy with Organization Isolation
+
+The application implements **multi-tenancy** using the `organization` field in JWT claims and `organization_id` in database tables. This ensures strict data isolation between organizations.
+
+### Critical Rules for Multi-Tenancy
+
+**ALL database tables MUST include `organization_id`:**
+- `users` - User accounts
+- `groups` - User groups for "ours" permissions
+- `roles` - Role definitions
+- `permissions` - Permission matrices
+- **Any new table you create** - MUST include `organization_id`
+
+**ALL queries MUST filter by `organization_id`:**
+```rust
+// ❌ WRONG - No organization filter
+let users = sqlx::query_as::<_, User>("SELECT * FROM users")
+    .fetch_all(&pool)
+    .await?;
+
+// ✅ CORRECT - Filtered by organization_id
+let users = sqlx::query_as::<_, User>(
+    "SELECT * FROM users WHERE organization_id = $1"
+)
+.bind(organization_id)
+.fetch_all(&pool)
+.await?;
+```
+
+### JWT Claims Structure
+
+The `organization` field in JWT claims specifies which organization a user belongs to:
+
+```rust
+pub struct Claims {
+    pub sub: String,                    // User ID
+    pub exp: usize,                     // Expiration
+    pub email_verified: Option<bool>,   // Email verification
+    pub mfa_enabled: Option<bool>,      // MFA status
+    pub email: Option<String>,          // User email
+    pub name: Option<String>,           // User name
+    pub admin: Option<bool>,            // Admin flag
+    pub organization: Option<String>,   // Organization name (NEW)
+}
+```
+
+### Database Schema Requirements
+
+When creating a new table, **ALWAYS** include:
+
+```sql
+CREATE TABLE IF NOT EXISTS my_new_table (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,  -- REQUIRED
+    -- ... other columns ...
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- REQUIRED: Index for performance
+CREATE INDEX IF NOT EXISTS idx_my_new_table_organization_id 
+    ON my_new_table(organization_id);
+
+-- REQUIRED: Unique constraints must include organization_id
+CREATE UNIQUE INDEX IF NOT EXISTS idx_my_new_table_unique 
+    ON my_new_table(some_field, COALESCE(organization_id, '00000000-0000-0000-0000-000000000000'::uuid));
+```
+
+### Handler Implementation
+
+When implementing handlers, **extract organization from claims** and **filter all queries**:
+
+```rust
+pub async fn get_resources(
+    State(state): State<Arc<AppState>>,
+    claims: Claims,  // Extract claims from JWT
+) -> Result<Json<Vec<Resource>>, (StatusCode, Json<ErrorResponse>)> {
+    // 1. Get organization_id from claims
+    let organization_id: Option<Uuid> = if let Some(org_name) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org_name)
+            .fetch_optional(&state.db_pool)
+            .await
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
+
+    // 2. Query with organization filter
+    let resources = sqlx::query_as::<_, Resource>(
+        "SELECT * FROM resources WHERE organization_id = $1 OR organization_id IS NULL"
+    )
+    .bind(organization_id)
+    .fetch_all(&state.db_pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Database error: {}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorResponse {
+                error: "Database error".to_string(),
+            }),
+        )
+    })?;
+
+    Ok(Json(resources))
+}
+```
+
+### Testing Tokens with Organization
+
+Generate test tokens with organization:
+
+```bash
+# User from Acme organization
+make token ARGS="--organization Acme --email user@acme.com"
+
+# Admin from TechCorp organization
+make token ARGS="--organization TechCorp --admin --email admin@techcorp.com"
+```
+
+### Migration Checklist
+
+When adding a new table or feature:
+
+- [ ] Table includes `organization_id UUID` column
+- [ ] Foreign key constraint: `REFERENCES organizations(id) ON DELETE CASCADE`
+- [ ] Index created: `CREATE INDEX idx_table_organization_id ON table(organization_id)`
+- [ ] Unique constraints include organization_id
+- [ ] All SELECT queries filter by `organization_id`
+- [ ] All INSERT queries include `organization_id`
+- [ ] All UPDATE queries filter by `organization_id`
+- [ ] All DELETE queries filter by `organization_id`
+- [ ] Handler extracts organization from `Claims`
+- [ ] Tests verify organization isolation
+
 ## Development Workflow
 
 ### 1. Code Quality Checks

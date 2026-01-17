@@ -3,7 +3,11 @@ mod middleware;
 mod migrations;
 mod models;
 
-use axum::{middleware as axum_middleware, routing::{get, post}, Router};
+use axum::{
+    middleware as axum_middleware,
+    routing::{get, post},
+    Router,
+};
 use sqlx::postgres::PgPoolOptions;
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
@@ -76,13 +80,28 @@ async fn main() {
 
     // Build admin-only routes
     let admin_routes = Router::new()
-        .route("/admin/roles", get(admin::list_roles).post(admin::create_role))
-        .route("/admin/roles/:role_id", get(admin::get_role).post(admin::update_role))
+        .route(
+            "/admin/roles",
+            get(admin::list_roles).post(admin::create_role),
+        )
+        .route(
+            "/admin/roles/:role_id",
+            get(admin::get_role).post(admin::update_role),
+        )
         .route("/admin/roles/:role_id/delete", post(admin::delete_role))
-        .route("/admin/roles/:role_id/permissions", post(admin::set_role_permission))
+        .route(
+            "/admin/roles/:role_id/permissions",
+            post(admin::set_role_permission),
+        )
         .route("/admin/users", get(admin::list_users))
-        .route("/admin/users/:user_id/roles", get(admin::get_user_roles).post(admin::assign_user_role))
-        .route("/admin/users/:user_id/roles/remove", post(admin::remove_user_role))
+        .route(
+            "/admin/users/:user_id/roles",
+            get(admin::get_user_roles).post(admin::assign_user_role),
+        )
+        .route(
+            "/admin/users/:user_id/roles/remove",
+            post(admin::remove_user_role),
+        )
         .route_layer(axum_middleware::from_fn_with_state(
             state.clone(),
             admin_middleware,

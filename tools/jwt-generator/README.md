@@ -57,21 +57,28 @@ Options:
 - `--email-verified <true|false>` - Mark email as verified (default: true)
 - `--mfa-enabled <true|false>` - Mark MFA as enabled (default: true)
 - `-a, --admin` - Mark user as admin (default: false)
+- `-o, --organization <ORG>` - Organization name for multi-tenancy
 - `--expires-in <HOURS>` - Token expiration in hours (default: 24)
 - `--secret <SECRET>` - JWT secret (overrides .env)
 
 ## Examples
 
+### Generate Token with Organization (Multi-Tenancy)
+
+```bash
+make token ARGS="--organization Acme --email user@acme.com --name 'John Doe'"
+```
+
 ### Generate Admin Token with Full Details
 
 ```bash
-make token ARGS="--sub admin001 --email admin@company.com --name 'John Admin' --admin --expires-in 168"
+make token ARGS="--sub admin001 --email admin@company.com --name 'John Admin' --admin --organization TechCorp --expires-in 168"
 ```
 
 ### Generate Regular User Token
 
 ```bash
-make token ARGS="--sub user456 --email user@company.com --name 'Jane Doe'"
+make token ARGS="--sub user456 --email user@company.com --name 'Jane Doe' --organization Acme"
 ```
 
 ### Quick Test Token (No Verification Required)

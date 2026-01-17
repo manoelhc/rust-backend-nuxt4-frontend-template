@@ -220,6 +220,7 @@ The backend expects JWT tokens with the following claims:
 - `admin`: Must be `true` (required for admin endpoints like `/admin/roles`, `/admin/users`)
 - `email`: User email (optional, used in onboarding)
 - `name`: User full name (optional, used in onboarding)
+- `organization`: Organization name (optional, used for multi-tenancy data isolation)
 
 #### JWT Token Generator (Built-in Tool)
 
@@ -240,6 +241,11 @@ make token ARGS="--admin"
 make token ARGS="--sub admin123 --email admin@example.com --name 'Admin User' --admin"
 ```
 
+**Generate a token with organization (multi-tenancy):**
+```bash
+make token ARGS="--organization Acme --email user@acme.com --name 'John Doe'"
+```
+
 **All available options:**
 - `--sub <ID>` - Subject/User ID (default: user123)
 - `--email <EMAIL>` - User email
@@ -247,6 +253,7 @@ make token ARGS="--sub admin123 --email admin@example.com --name 'Admin User' --
 - `--email-verified <true|false>` - Email verification status (default: true)
 - `--mfa-enabled <true|false>` - MFA status (default: true)
 - `--admin` - Mark user as admin (default: false)
+- `--organization <ORG>` - Organization name for multi-tenancy
 - `--expires-in <HOURS>` - Token expiration in hours (default: 24)
 - `--secret <SECRET>` - JWT secret (overrides .env)
 

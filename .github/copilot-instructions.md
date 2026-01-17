@@ -338,6 +338,84 @@ let admin_routes = Router::new()
     // ... other routes
 ```
 
+## Multi-Tenancy (Organization Isolation)
+
+**CRITICAL:** The application implements strict multi-tenancy. All data MUST be isolated by organization.
+
+### Database Table Requirements
+
+**ALL tables MUST include `organization_id`:**
+
+```sql
+CREATE TABLE IF NOT EXISTS my_table (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,  -- REQUIRED
+    -- ... other columns ...
+);
+
+CREATE INDEX IF NOT EXISTS idx_my_table_organization_id ON my_table(organization_id);
+```
+
+### Query Requirements
+
+**ALL queries MUST filter by `organization_id`:**
+
+```rust
+// ❌ WRONG
+SELECT * FROM users;
+
+// ✅ CORRECT
+SELECT * FROM users WHERE organization_id = $1;
+```
+
+### JWT Claims
+
+Extract organization from JWT claims:
+
+```rust
+pub struct Claims {
+    pub organization: Option<String>,  // Organization name
+    // ... other fields
+}
+```
+
+### Handler Pattern
+
+```rust
+pub async fn handler(
+    State(state): State<Arc<AppState>>,
+    claims: Claims,
+) -> Result<Json<Response>, (StatusCode, Json<ErrorResponse>)> {
+    // Get organization_id from claims
+    let org_id: Option<Uuid> = if let Some(org) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org)
+            .fetch_optional(&state.db_pool)
+            .await.ok().flatten()
+    } else {
+        None
+    };
+
+    // Query with organization filter
+    let data = sqlx::query_as::<_, Model>(
+        "SELECT * FROM table WHERE organization_id = $1"
+    )
+    .bind(org_id)
+    .fetch_all(&state.db_pool)
+    .await?;
+
+    Ok(Json(data))
+}
+```
+
+### Testing
+
+Generate tokens with organization:
+
+```bash
+make token ARGS="--organization Acme --email user@acme.com"
+```
+
 ### Add a new frontend page
 1. Create file in `frontend/pages/` (auto-routed)
 2. Add translations to all locale files
@@ -346,8 +424,12 @@ let admin_routes = Router::new()
 
 ### Add a database table
 1. Create migration in `migrations/XXX_description.sql`
-2. Add corresponding Rust struct with `sqlx::FromRow`
-3. Test with `cargo test`
+2. **MUST include `organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE`**
+3. **MUST create index on `organization_id`**
+4. **MUST include organization_id in unique constraints**
+5. Add corresponding Rust struct with `sqlx::FromRow` and `organization_id` field
+6. **MUST filter all queries by `organization_id`**
+7. Test with `cargo test`
 
 ## Security Guidelines
 

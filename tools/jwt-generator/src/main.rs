@@ -14,6 +14,7 @@ struct Claims {
     email: Option<String>,
     name: Option<String>,
     admin: Option<bool>,
+    organization: Option<String>,
 }
 
 /// JWT Token Generator
@@ -46,6 +47,10 @@ struct Args {
     /// Mark user as admin
     #[arg(short, long, default_value = "false")]
     admin: bool,
+
+    /// Organization ID
+    #[arg(short, long)]
+    organization: Option<String>,
 
     /// Token expiration in hours
     #[arg(long, default_value = "24")]
@@ -93,6 +98,7 @@ fn main() {
         email: args.email.clone(),
         name: args.name.clone(),
         admin: Some(args.admin),
+        organization: args.organization.clone(),
     };
 
     // Generate token
@@ -115,6 +121,7 @@ fn main() {
     println!("Email Verified:    {}", claims.email_verified.unwrap_or(false));
     println!("MFA Enabled:       {}", claims.mfa_enabled.unwrap_or(false));
     println!("Admin:             {}", claims.admin.unwrap_or(false));
+    println!("Organization:      {}", claims.organization.as_deref().unwrap_or("(not set)"));
     println!("Expires:           {} (in {} hours)", 
         chrono::DateTime::from_timestamp(claims.exp as i64, 0)
             .map(|dt| dt.format("%Y-%m-%d %H:%M:%S UTC").to_string())

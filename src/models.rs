@@ -13,6 +13,7 @@ pub struct Claims {
     pub email: Option<String>,
     pub name: Option<String>,
     pub admin: Option<bool>,
+    pub organization: Option<String>,
 }
 
 // Application state
@@ -60,8 +61,19 @@ pub struct User {
     pub user_email: String,
     pub user_fullname: String,
     pub organization: Option<String>,
+    pub organization_id: Option<Uuid>,
     pub group_id: Option<Uuid>,
     pub properties: JsonValue,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
+#[allow(dead_code)]
+pub struct Organization {
+    pub id: Uuid,
+    pub name: String,
+    pub description: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -72,6 +84,7 @@ pub struct Group {
     pub id: Uuid,
     pub name: String,
     pub description: Option<String>,
+    pub organization_id: Option<Uuid>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -82,6 +95,7 @@ pub struct Role {
     pub name: String,
     pub description: Option<String>,
     pub is_admin: bool,
+    pub organization_id: Option<Uuid>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -97,6 +111,7 @@ pub struct Permission {
     pub can_edit_own: bool,
     pub can_view_ours: bool,
     pub can_edit_ours: bool,
+    pub organization_id: Option<Uuid>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
