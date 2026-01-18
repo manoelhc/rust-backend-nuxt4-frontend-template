@@ -85,8 +85,11 @@ const { locale, locales, setLocale } = useI18n()
 const config = useRuntimeConfig()
 const projectName = config.public.projectName
 const { loadPreferences, saveTheme, saveLanguage, effectiveTheme } = usePreferences()
+const { get } = useApi()
 
 const showLangDropdown = ref(false)
+const logoUrl = ref('')
+const logoAlt = ref('Application Logo')
 
 const currentLocale = computed(() => locale.value)
 const currentLocaleName = computed(() => {
