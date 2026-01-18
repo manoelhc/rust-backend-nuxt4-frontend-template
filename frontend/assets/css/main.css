@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-@source "../../components/**/*.{js,vue,ts}";
-@source "../../layouts/**/*.vue";
-@source "../../pages/**/*.vue";
-@source "../../plugins/**/*.{js,ts}";
-@source "../../app.vue";
-@source "../../node_modules/flowbite/**/*.{js,ts}";
-
 @layer base {
   /* Light mode (default) */
   :root {
@@ -14,8 +7,7 @@
   }
 
   html {
-    @apply antialiased;
-    @apply bg-white text-gray-900;
+    @apply antialiased bg-white text-gray-900;
   }
 
   /* Dark mode */
