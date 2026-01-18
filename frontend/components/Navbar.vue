@@ -89,6 +89,9 @@ const isDark = computed(() => effectiveTheme.value === 'dark')
 onMounted(async () => {
   // Load preferences (theme and language) only on client after hydration
   if (process.client) {
+    // Wait for hydration to complete
+    await nextTick()
+
     loadPreferences()
 
     // Force a small delay to ensure DOM is fully updated
