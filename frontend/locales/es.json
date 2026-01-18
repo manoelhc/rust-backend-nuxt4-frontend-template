@@ -45,7 +45,18 @@
         "heading4": "Encabezado 4",
         "heading5": "Encabezado 5",
         "textColor": "Color del Texto",
-        "backgroundColor": "Color de Fondo"
+        "backgroundColor": "Color de Fondo",
+        "insertLink": "Insertar Enlace",
+        "insertImage": "Insertar Imagen",
+        "enterLinkUrl": "Ingrese la URL del enlace:",
+        "enterLinkText": "Ingrese el texto del enlace:",
+        "imageUrl": "URL de la Imagen",
+        "imagePlaceholder": "https://ejemplo.com/imagen.jpg",
+        "imageAlt": "Texto Alternativo (para accesibilidad)",
+        "imageAltPlaceholder": "Describe la imagen",
+        "imageUrlRequired": "Por favor, ingrese la URL de la imagen",
+        "insert": "Insertar",
+        "cancel": "Cancelar"
       },
       "notifications": {
         "title": "Notificaciones",
