@@ -27,13 +27,14 @@
       "description": "Showcase and demo of all custom components available in this application.",
       "lexical": {
         "title": "Rich Text Editor (Lexical)",
-        "description": "A powerful, extensible, and customizable rich text editor built with Lexical. Try formatting text with the toolbar buttons.",
+        "description": "A powerful, extensible, and customizable rich text editor built with Facebook Lexical. Try formatting text with the toolbar buttons.",
         "placeholder": "Start typing here... Try using the toolbar buttons for formatting.",
         "characters": "Characters",
         "words": "Words",
-        "output": "Editor Output",
+        "output": "Editor Output (HTML)",
         "noContent": "No content yet",
-        "headingPlaceholder": "Heading"
+        "headingPlaceholder": "Heading",
+        "learnMore": "Learn more about Lexical"
       },
       "notifications": {
         "title": "Notifications",
