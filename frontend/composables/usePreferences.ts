@@ -35,25 +35,20 @@ const initMediaQuery = () => {
 const applyTheme = (selectedTheme: Theme) => {
   if (process.client) {
     const root = document.documentElement
-    console.log('applyTheme called with:', selectedTheme)
 
     if (selectedTheme === 'system') {
       initMediaQuery()
       const systemPrefersDark = mediaQueryList?.matches ?? false
-      console.log('system theme: systemPrefersDark =', systemPrefersDark)
       if (systemPrefersDark) {
         root.classList.add('dark')
       } else {
         root.classList.remove('dark')
       }
     } else if (selectedTheme === 'dark') {
-      console.log('adding dark class')
       root.classList.add('dark')
     } else if (selectedTheme === 'light') {
-      console.log('removing dark class')
       root.classList.remove('dark')
     }
-    console.log('after applyTheme, html has dark class:', root.classList.contains('dark'))
   }
 }
 
