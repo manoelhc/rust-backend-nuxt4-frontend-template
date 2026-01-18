@@ -6,18 +6,21 @@
 
 <script setup lang="ts">
 // Initialize theme BEFORE rendering to prevent flash
-// This runs during SSR and client mount
-if (process.client) {
+// This runs immediately when the script is evaluated
+if (process.client && typeof window !== 'undefined') {
   const savedTheme = localStorage.getItem('theme')
+  const htmlElement = document.documentElement
 
-  // If no saved theme, start with light mode
-  if (!savedTheme) {
-    // Remove any dark class that might have been set by system preference
-    document.documentElement.classList.remove('dark')
+  // Explicitly set the theme class
+  if (savedTheme === 'dark') {
+    htmlElement.classList.add('dark')
+  } else {
+    // For 'light' or no saved theme, ensure dark class is removed
+    htmlElement.classList.remove('dark')
   }
 }
 
-// Validate theme value on mount
+// Validate and clean up theme on mount
 onMounted(() => {
   if (process.client) {
     const savedTheme = localStorage.getItem('theme')
@@ -25,6 +28,7 @@ onMounted(() => {
     // Clear invalid theme values from localStorage
     if (savedTheme && !['light', 'dark', 'system'].includes(savedTheme)) {
       localStorage.removeItem('theme')
+      document.documentElement.classList.remove('dark')
     }
   }
 })
