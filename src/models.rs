@@ -195,6 +195,7 @@ pub struct PaginationQuery {
 #[derive(Serialize, Deserialize, sqlx::FromRow)]
 pub struct AppSetting {
     pub id: Uuid,
+    pub organization_id: Option<Uuid>,
     pub setting_key: String,
     pub setting_value: Option<String>,
     pub metadata: JsonValue,
