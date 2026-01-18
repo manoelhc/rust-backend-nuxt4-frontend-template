@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 
 export type Theme = 'light' | 'dark' | 'system'
 
@@ -17,29 +17,43 @@ const savedLanguage = ref<string>('en')
 // MediaQueryList instance for system theme detection
 let mediaQueryList: MediaQueryList | null = null
 
-export const usePreferences = () => {
-  const { locale, setLocale } = useI18n()
+// Initialize media query list
+const initMediaQuery = () => {
+  if (process.client && !mediaQueryList) {
+    mediaQueryList = window.matchMedia(DARK_MODE_MEDIA_QUERY)
 
-  // Apply theme to document
-  const applyTheme = (selectedTheme: Theme) => {
-    if (process.client) {
-      const root = document.documentElement
+    // Listen for system theme changes
+    mediaQueryList.addEventListener('change', (e) => {
+      if (theme.value === 'system') {
+        applyTheme('system')
+      }
+    })
+  }
+}
 
-      if (selectedTheme === 'system') {
-        initMediaQuery()
-        const systemPrefersDark = mediaQueryList?.matches ?? false
-        if (systemPrefersDark) {
-          root.classList.add('dark')
-        } else {
-          root.classList.remove('dark')
-        }
-      } else if (selectedTheme === 'dark') {
+// Apply theme to document - module level function
+const applyTheme = (selectedTheme: Theme) => {
+  if (process.client) {
+    const root = document.documentElement
+
+    if (selectedTheme === 'system') {
+      initMediaQuery()
+      const systemPrefersDark = mediaQueryList?.matches ?? false
+      if (systemPrefersDark) {
         root.classList.add('dark')
-      } else if (selectedTheme === 'light') {
+      } else {
         root.classList.remove('dark')
       }
+    } else if (selectedTheme === 'dark') {
+      root.classList.add('dark')
+    } else if (selectedTheme === 'light') {
+      root.classList.remove('dark')
     }
   }
+}
+
+export const usePreferences = () => {
+  const { locale, setLocale } = useI18n()
 
   // Load preferences from localStorage
   const loadPreferences = () => {
