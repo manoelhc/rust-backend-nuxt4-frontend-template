@@ -115,7 +115,6 @@ async fn main() {
         .route("/health", get(system::health_check))
         .route("/system/version", get(system::system_version))
         .route("/validate-token", post(system::validate_token))
-        .route("/admin/logo", get(system::get_logo))
         .merge(protected_routes)
         .merge(admin_routes)
         .layer(CorsLayer::permissive())
