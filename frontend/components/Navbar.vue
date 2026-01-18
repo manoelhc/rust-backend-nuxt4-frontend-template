@@ -84,7 +84,12 @@ const currentLocaleName = computed(() => {
   return loc?.name || 'English'
 })
 
-const isDark = computed(() => effectiveTheme.value === 'dark')
+const isDark = ref(false)
+
+// Update isDark only on client after hydration
+watch(() => effectiveTheme.value, (newTheme) => {
+  isDark.value = newTheme === 'dark'
+}, { immediate: true })
 
 onMounted(async () => {
   // Load preferences (theme and language) only on client after hydration
