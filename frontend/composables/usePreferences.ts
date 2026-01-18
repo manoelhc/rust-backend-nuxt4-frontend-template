@@ -65,8 +65,12 @@ export const usePreferences = () => {
     if (process.client) {
       // Load theme preference
       const savedTheme = localStorage.getItem('theme') as Theme
+      console.log('[loadPreferences] savedTheme from localStorage:', savedTheme)
       if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+        console.log('[loadPreferences] setting theme to:', savedTheme)
         theme.value = savedTheme
+      } else {
+        console.log('[loadPreferences] no saved theme, keeping default:', theme.value)
       }
 
       // Load language preference
@@ -77,6 +81,7 @@ export const usePreferences = () => {
       }
 
       // Apply theme
+      console.log('[loadPreferences] applying theme:', theme.value)
       applyTheme(theme.value)
     }
   }
