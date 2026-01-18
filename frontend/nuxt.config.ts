@@ -57,6 +57,21 @@ export default defineNuxtConfig({
       ],
       script: [
         {
+          // This script runs immediately before Vue hydration
+          // It prevents hydration mismatches by not applying theme class during SSR
+          innerHTML: `
+            if (typeof localStorage !== 'undefined' && typeof document !== 'undefined') {
+              const theme = localStorage.getItem('theme');
+              if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+            }
+          `,
+          type: 'text/javascript'
+        },
+        {
           src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.0/dist/flowbite.min.js',
           defer: true
         }
