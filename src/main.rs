@@ -75,7 +75,7 @@ async fn main() {
         .route("/system/uptime", get(system::system_uptime))
         .route("/system/onboarding", post(system::system_onboarding))
         .route("/profile", get(system::get_profile))
-        .route("/admin/logo", post(system::update_logo))
+        .route("/admin/logo", get(system::get_logo).post(system::update_logo))
         .route_layer(axum_middleware::from_fn_with_state(
             state.clone(),
             middleware::auth_middleware,
