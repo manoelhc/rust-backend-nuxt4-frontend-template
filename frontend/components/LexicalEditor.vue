@@ -157,6 +157,57 @@
         </a>
       </p>
     </div>
+
+    <!-- Image Dialog Modal -->
+    <div v-if="showImageDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg border border-gray-300 dark:border-gray-600">
+        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          {{ $t('pages.components.lexical.insertImage') }}
+        </h3>
+
+        <!-- Image URL input -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            {{ $t('pages.components.lexical.imageUrl') }}
+          </label>
+          <input
+            v-model="imageUrl"
+            type="url"
+            :placeholder="$t('pages.components.lexical.imagePlaceholder')"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        <!-- Image alt text -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            {{ $t('pages.components.lexical.imageAlt') }}
+          </label>
+          <input
+            v-model="imageAlt"
+            type="text"
+            :placeholder="$t('pages.components.lexical.imageAltPlaceholder')"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-2">
+          <button
+            @click="insertImageFromUrl"
+            class="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors font-medium"
+          >
+            {{ $t('pages.components.lexical.insert') }}
+          </button>
+          <button
+            @click="showImageDialog = false"
+            class="flex-1 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-100 rounded hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors font-medium"
+          >
+            {{ $t('pages.components.lexical.cancel') }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
