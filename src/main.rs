@@ -180,6 +180,7 @@ async fn main() {
         .route("/health", get(health_check))
         .route("/system/version", get(system_version))
         .route("/validate-token", post(validate_token))
+        .route("/admin/logo", get(get_logo))
         .merge(protected_routes)
         .layer(CorsLayer::permissive())
         .with_state(state);
