@@ -3,10 +3,56 @@ import { mockData, createMockResponse } from '~/utils/mockData'
 /**
  * Composable for making API calls with automatic mock support when AI_FRONTEND_DEV is enabled.
  * This allows AI agents and UI builders to work without a running backend.
+ * 
+ * Automatically includes JWT token from 'auth-token' cookie when available.
  */
 export const useApi = () => {
   const config = useRuntimeConfig()
   const isDevMode = config.public.aiFrontendDev === 'true' || config.public.aiFrontendDev === true
+  
+  /**
+   * Get the JWT token from cookie if available
+   * Reads directly from document.cookie on client side for reliability
+   */
+  const getAuthToken = () => {
+    // On server side or during SSR, use useCookie
+    if (process.server) {
+      const cookie = useCookie('auth-token') || useCookie('token')
+      return cookie.value || null
+    }
+    
+    // On client side, read directly from document.cookie
+    if (process.client && typeof document !== 'undefined') {
+      const cookies = document.cookie.split(';')
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=')
+        if (name === 'auth-token') {
+          return decodeURIComponent(value)
+        }
+      }
+    }
+    
+    return null
+  }
+  
+  /**
+   * Get common headers including auth token if available
+   */
+  const getHeaders = () => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    
+    const token = getAuthToken()
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+      console.log('[useApi] Added Authorization header with token')
+    } else {
+      console.warn('[useApi] No auth token found in cookies')
+    }
+    
+    return headers
+  }
   
   /**
    * Make a GET request to the API or return mock data
@@ -18,7 +64,9 @@ export const useApi = () => {
     }
     
     try {
-      const response = await fetch(`${config.public.apiUrl}${endpoint}`)
+      const response = await fetch(`${config.public.apiUrl}${endpoint}`, {
+        headers: getHeaders()
+      })
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -52,9 +100,7 @@ export const useApi = () => {
     try {
       const response = await fetch(`${config.public.apiUrl}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getHeaders(),
         body: body ? JSON.stringify(body) : undefined,
       })
       
@@ -77,6 +123,7 @@ export const useApi = () => {
   
   /**
    * Make an authenticated request with JWT token
+   * @deprecated Use get() or post() instead - they now automatically include the auth token from cookie
    */
   const authenticatedRequest = async <T>(
     endpoint: string,
@@ -126,6 +173,7 @@ export const useApi = () => {
     get,
     post,
     authenticatedRequest,
+    getAuthToken,
     isDevMode
   }
 }

@@ -53,10 +53,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NUXT_PUBLIC_ENABLE_URL_AUTH=true
     environment:
       - NUXT_PUBLIC_API_URL=http://fedora.local:8070/api
       - NUXT_HOST=0.0.0.0
       - NUXT_PUBLIC_APP_PORT=3000
+      - NUXT_PUBLIC_ENABLE_URL_AUTH=true
     depends_on:
       - backend
     networks:

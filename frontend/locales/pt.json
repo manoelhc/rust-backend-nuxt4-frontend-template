@@ -11,6 +11,9 @@
     "components": "Componentes",
     "preferences": "Preferências",
     "adminPreferences": "Configurações da App",
+    "admin": "Administração",
+    "roles": "Funções",
+    "users": "Usuários",
     "logout": "Sair"
   },
   "pages": {
@@ -126,6 +129,54 @@
       "themeSystem": "Sistema",
       "saveChanges": "Salvar Alterações",
       "changesSaved": "Suas preferências foram salvas com sucesso!"
+    },
+    "admin": {
+      "roles": {
+        "title": "Gerenciamento de Funções",
+        "description": "Gerencie as funções do sistema e suas permissões.",
+        "createRole": "Criar Função",
+        "editRole": "Editar Função",
+        "deleteRole": "Excluir Função",
+        "roleName": "Nome da Função",
+        "roleDescription": "Descrição",
+        "isAdmin": "É Administrador",
+        "permissions": "Permissões",
+        "permissionMatrix": "Matriz de Permissões",
+        "page": "Página",
+        "canView": "Pode Visualizar",
+        "canEdit": "Pode Editar",
+        "canViewOwn": "Pode Ver Próprios",
+        "canEditOwn": "Pode Editar Próprios",
+        "canViewOurs": "Pode Ver Nossos",
+        "canEditOurs": "Pode Editar Nossos",
+        "pages": {
+          "dashboard": "Painel",
+          "users": "Usuários",
+          "roles": "Funções",
+          "profile": "Perfil",
+          "preferences": "Preferências",
+          "support": "Suporte"
+        },
+        "confirmDelete": "Tem certeza de que deseja excluir esta função?",
+        "deleteSuccess": "Função excluída com sucesso",
+        "createSuccess": "Função criada com sucesso",
+        "updateSuccess": "Função atualizada com sucesso",
+        "permissionUpdateSuccess": "Permissões atualizadas com sucesso"
+      },
+      "users": {
+        "title": "Gerenciamento de Usuários",
+        "description": "Gerencie funções e permissões de usuários.",
+        "userName": "Nome",
+        "userEmail": "E-mail",
+        "userRoles": "Funções",
+        "assignRole": "Atribuir Função",
+        "removeRole": "Remover Função",
+        "noRoles": "Nenhuma função atribuída",
+        "selectRole": "Selecione uma função",
+        "assignSuccess": "Função atribuída com sucesso",
+        "removeSuccess": "Função removida com sucesso",
+        "noUsers": "Nenhum usuário encontrado"
+      }
     }
   },
   "common": {
@@ -133,6 +184,13 @@
     "error": "Ocorreu um erro",
     "save": "Salvar",
     "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "create": "Criar",
+    "close": "Fechar",
+    "actions": "Ações",
+    "yes": "Sim",
+    "no": "Não",
     "version": "Versão"
   }
 }

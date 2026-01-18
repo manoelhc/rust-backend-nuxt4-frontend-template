@@ -108,6 +108,29 @@ npm run dev
 # The frontend will be available at http://localhost:3000
 ```
 
+### Makefile Commands
+
+The project includes a Makefile with useful commands for development:
+
+```bash
+# Start all services with Docker Compose
+make run        # or: make up
+
+# Stop all services
+make stop       # or: make down
+
+# View logs
+make logs
+
+# Rebuild containers
+make build
+
+# Generate JWT token for testing
+make token                                                  # Regular user token
+make token ARGS="--admin"                                  # Admin token
+make token ARGS="--sub user123 --email user@example.com"  # Custom token
+```
+
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -126,7 +149,34 @@ OTEL_SERVICE_NAME=rust-backend-template
 NUXT_PUBLIC_API_URL=http://localhost:3000
 NUXT_PUBLIC_PROJECT_NAME=My Application
 AI_FRONTEND_DEV=false
+NUXT_PUBLIC_ENABLE_URL_AUTH=false
 ```
+
+### URL-Based Authentication
+
+The frontend supports receiving JWT tokens via URL query parameters for seamless integration with external authentication systems.
+
+**Enable the feature:**
+```bash
+export NUXT_PUBLIC_ENABLE_URL_AUTH=true
+```
+
+**Usage:**
+```
+http://localhost:3000/?auth-token=your-jwt-token-here
+```
+
+**How it works:**
+1. When a user accesses the URL with `auth-token` query parameter, the plugin intercepts it
+2. The token is stored in a secure cookie named `auth-token` (7-day expiration)
+3. All subsequent API calls automatically include the token in the Authorization header
+4. The query parameter is removed from the URL for security (optional)
+
+**Security considerations:**
+- Only enable this feature when integrating with trusted authentication systems
+- Use HTTPS in production to prevent token interception
+- Tokens are stored as HttpOnly cookies when served over HTTPS
+- The feature is disabled by default
 
 ### AI Frontend Development Mode
 
@@ -167,8 +217,69 @@ The backend expects JWT tokens with the following claims:
 - `exp`: Expiration timestamp (required)
 - `email_verified`: Must be `true` (required for protected endpoints)
 - `mfa_enabled`: Must be `true` (required for protected endpoints)
+- `admin`: Must be `true` (required for admin endpoints like `/admin/roles`, `/admin/users`)
 - `email`: User email (optional, used in onboarding)
 - `name`: User full name (optional, used in onboarding)
+- `organization`: Organization name (optional, used for multi-tenancy data isolation)
+
+#### JWT Token Generator (Built-in Tool)
+
+The project includes a built-in JWT token generator for development and testing. It automatically uses the `JWT_SECRET` from your `.env` file.
+
+**Generate a regular user token:**
+```bash
+make token
+```
+
+**Generate an admin token:**
+```bash
+make token ARGS="--admin"
+```
+
+**Generate a custom token:**
+```bash
+make token ARGS="--sub admin123 --email admin@example.com --name 'Admin User' --admin"
+```
+
+**Generate a token with organization (multi-tenancy):**
+```bash
+make token ARGS="--organization Acme --email user@acme.com --name 'John Doe'"
+```
+
+**All available options:**
+- `--sub <ID>` - Subject/User ID (default: user123)
+- `--email <EMAIL>` - User email
+- `--name <NAME>` - User full name
+- `--email-verified <true|false>` - Email verification status (default: true)
+- `--mfa-enabled <true|false>` - MFA status (default: true)
+- `--admin` - Mark user as admin (default: false)
+- `--organization <ORG>` - Organization name for multi-tenancy
+- `--expires-in <HOURS>` - Token expiration in hours (default: 24)
+- `--secret <SECRET>` - JWT secret (overrides .env)
+
+**Example output:**
+```
+=== JWT Token Generated ===
+
+Token:
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+
+=== Claims ===
+Subject (sub):     admin123
+Email:             admin@example.com
+Name:              Admin User
+Email Verified:    true
+MFA Enabled:       true
+Admin:             true
+Expires:           2026-01-18 09:11:50 UTC (in 24 hours)
+
+=== Usage ===
+You can use this token in:
+1. Authorization header: Bearer <token>
+2. URL parameter: http://localhost:3000/?auth-token=<token>
+```
+
+See `tools/jwt-generator/README.md` for more details.
 
 #### Example JWT Token Generation (Python)
 
@@ -176,6 +287,7 @@ The backend expects JWT tokens with the following claims:
 import jwt
 import time
 
+# Regular user token
 payload = {
     "sub": "user123",
     "exp": int(time.time()) + 3600,
@@ -185,8 +297,21 @@ payload = {
     "name": "John Doe"
 }
 
+# Admin user token (required for /admin/* endpoints)
+admin_payload = {
+    "sub": "admin123",
+    "exp": int(time.time()) + 3600,
+    "email_verified": True,
+    "mfa_enabled": True,
+    "admin": True,  # Required for admin access
+    "email": "admin@example.com",
+    "name": "Admin User"
+}
+
 token = jwt.encode(payload, "your-secret-key", algorithm="HS256")
+admin_token = jwt.encode(admin_payload, "your-secret-key", algorithm="HS256")
 print(token)
+print(admin_token)
 ```
 
 ## 🏗️ Project Structure

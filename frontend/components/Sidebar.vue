@@ -60,7 +60,38 @@
             <span class="ml-3">{{ $t('sidebar.components') }}</span>
           </NuxtLink>
         </li>
-        <li>
+
+        <!-- Admin Section -->
+        <li v-if="isAdmin" class="pt-4 mt-4 space-y-2 border-t border-gray-200 dark:border-gray-700">
+          <div class="px-2 text-xs font-semibold text-gray-400 uppercase dark:text-gray-500">
+            {{ $t('sidebar.admin') }}
+          </div>
+          <NuxtLink
+            to="/admin/roles"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+          >
+            <svg
+              class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
+            </svg>
+            <span class="ml-3">{{ $t('sidebar.roles') }}</span>
+          </NuxtLink>
+          <NuxtLink
+            to="/admin/users"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+          >
+            <svg
+              class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+            </svg>
+            <span class="ml-3">{{ $t('sidebar.users') }}</span>
+          </NuxtLink>
           <NuxtLink
             to="/admin-preferences"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -136,5 +167,9 @@
 </template>
 
 <script setup lang="ts">
-// Sidebar component - no state, just static layout
+import { ref } from 'vue'
+
+// For now, we'll use a ref to simulate admin status
+// In a real application, this would come from the JWT token or user context
+const isAdmin = ref(true) // Set to true for demo purposes
 </script>
