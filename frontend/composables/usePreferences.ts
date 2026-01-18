@@ -60,7 +60,6 @@ export const usePreferences = () => {
     if (process.client) {
       // Load theme preference
       const savedTheme = localStorage.getItem('theme') as Theme
-      console.log('loadPreferences: savedTheme from localStorage:', savedTheme)
       if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
         theme.value = savedTheme
       }
@@ -73,7 +72,6 @@ export const usePreferences = () => {
       }
 
       // Apply theme
-      console.log('loadPreferences: applying theme:', theme.value)
       applyTheme(theme.value)
     }
   }
