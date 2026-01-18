@@ -169,13 +169,11 @@ const saveChanges = () => {
     theme: selectedTheme.value,
     language: selectedLanguage.value
   })
-  
-  // Show success message
-  showSuccessMessage.value = true
-  
-  // Hide success message after 3 seconds
-  setTimeout(() => {
-    showSuccessMessage.value = false
-  }, 3000)
+
+  // Show success notification (5 second duration)
+  showSuccessNotification(
+    $t('pages.preferences.changesSaved'),
+    5000
+  )
 }
 </script>
