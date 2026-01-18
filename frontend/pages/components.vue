@@ -13,6 +13,22 @@
         </div>
       </div>
 
+      <!-- Lexical Editor Section -->
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            {{ $t('pages.components.lexical.title') }}
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ $t('pages.components.lexical.description') }}
+          </p>
+        </div>
+
+        <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          <LexicalEditor />
+        </div>
+      </section>
+
       <!-- Notifications Section -->
       <section class="space-y-4">
         <div>
