@@ -27,13 +27,14 @@
       "description": "Demostración de todos los componentes personalizados disponibles en esta aplicación.",
       "lexical": {
         "title": "Editor de Texto Enriquecido (Lexical)",
-        "description": "Un editor de texto enriquecido poderoso, extensible y personalizable construido con Lexical. Intenta formatear texto con los botones de la barra de herramientas.",
+        "description": "Un editor de texto enriquecido poderoso, extensible y personalizable construido con Facebook Lexical. Intenta formatear texto con los botones de la barra de herramientas.",
         "placeholder": "Comienza a escribir aquí... Intenta usar los botones de la barra de herramientas para formato.",
         "characters": "Caracteres",
         "words": "Palabras",
-        "output": "Salida del Editor",
+        "output": "Salida del Editor (HTML)",
         "noContent": "Sin contenido aún",
-        "headingPlaceholder": "Encabezado"
+        "headingPlaceholder": "Encabezado",
+        "learnMore": "Obtenga más información sobre Lexical"
       },
       "notifications": {
         "title": "Notificaciones",
