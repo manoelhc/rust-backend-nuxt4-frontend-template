@@ -8,6 +8,7 @@
   "sidebar": {
     "dashboard": "Panel",
     "support": "Soporte",
+    "components": "Componentes",
     "preferences": "Preferencias",
     "logout": "Cerrar Sesión"
   },
