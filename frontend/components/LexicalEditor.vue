@@ -381,6 +381,48 @@ const changeBackgroundColor = (event: Event) => {
   const color = (event.target as HTMLInputElement).value
   execCommand('backColor', color)
 }
+
+const insertLink = () => {
+  if (!editor.value) return
+
+  const selection = window.getSelection()
+  if (!selection || selection.toString().length === 0) {
+    const url = prompt(t('pages.components.lexical.enterLinkUrl'))
+    if (url) {
+      const text = prompt(t('pages.components.lexical.enterLinkText'), 'Link')
+      document.execCommand('insertHTML', false, `<a href="${url}" target="_blank">${text || url}</a>`)
+      updateState()
+      editor.value.focus()
+    }
+    return
+  }
+
+  const url = prompt(t('pages.components.lexical.enterLinkUrl'))
+  if (url) {
+    document.execCommand('createLink', false, url)
+    updateState()
+    updateToolbarState()
+    editor.value.focus()
+  }
+}
+
+const insertImageFromUrl = () => {
+  if (!imageUrl.value) {
+    alert(t('pages.components.lexical.imageUrlRequired'))
+    return
+  }
+
+  if (!editor.value) return
+
+  const html = `<img src="${imageUrl.value}" alt="${imageAlt.value || 'Image'}" style="max-width: 100%; height: auto; margin: 10px 0;" />`
+  document.execCommand('insertHTML', false, html)
+
+  updateState()
+  showImageDialog.value = false
+  imageUrl.value = ''
+  imageAlt.value = ''
+  editor.value.focus()
+}
 </script>
 
 <style scoped>
