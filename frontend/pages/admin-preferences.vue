@@ -122,15 +122,19 @@ const isSaving = ref(false)
 onMounted(async () => {
   try {
     const response = await get<{ logo_url: string; alt_text: string }>('/admin/logo', 'adminLogo')
-    if (response?.logo_url) {
-      formData.value.logoUrl = response.logo_url
-      formData.value.altText = response.alt_text
-      logoUrl.value = response.logo_url
-      logoAlt.value = response.alt_text
+    if (response) {
+      formData.value.logoUrl = response.logo_url || ''
+      formData.value.altText = response.alt_text || 'Application Logo'
+      if (response.logo_url) {
+        logoUrl.value = response.logo_url
+        logoAlt.value = response.alt_text || 'Application Logo'
+      }
     }
   } catch (error) {
     console.error('Failed to load logo settings:', error)
-    // Use defaults if API fails
+    // Use defaults if API fails - this is expected during development
+    formData.value.logoUrl = ''
+    formData.value.altText = 'Application Logo'
   }
 })
 
