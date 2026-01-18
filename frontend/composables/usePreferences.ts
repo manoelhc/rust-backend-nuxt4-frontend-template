@@ -83,9 +83,11 @@ export const usePreferences = () => {
   
   // Save theme preference
   const saveTheme = (newTheme: Theme) => {
+    console.log('[saveTheme] called with:', newTheme, 'old theme.value:', theme.value)
     theme.value = newTheme
     if (process.client) {
       localStorage.setItem('theme', newTheme)
+      console.log('[saveTheme] saved to localStorage, calling applyTheme')
       applyTheme(newTheme)
     }
   }
