@@ -104,14 +104,7 @@ onMounted(() => {
 function toggleDarkMode() {
   // Toggle between light and dark (not system)
   const newTheme = isDark.value ? 'light' : 'dark'
-  console.log('Toggling theme from', isDark.value ? 'dark' : 'light', 'to', newTheme)
-  console.log('effectiveTheme before:', effectiveTheme.value)
   saveTheme(newTheme)
-  // Force reactivity update
-  setTimeout(() => {
-    console.log('effectiveTheme after:', effectiveTheme.value)
-    console.log('Current HTML dark class:', document.documentElement.classList.contains('dark'))
-  }, 50)
 }
 
 function toggleLangDropdown() {
