@@ -22,6 +22,39 @@
       "title": "Suporte",
       "description": "Obtenha ajuda e suporte para sua aplicação."
     },
+    "components": {
+      "title": "Componentes",
+      "description": "Demonstração de todos os componentes personalizados disponíveis nesta aplicação.",
+      "notifications": {
+        "title": "Notificações",
+        "description": "Notificações de toast que aparecem no canto superior direito e persistem na navegação.",
+        "showSuccess": "Mostrar Sucesso",
+        "showError": "Mostrar Erro",
+        "showWarning": "Mostrar Aviso",
+        "showInfo": "Mostrar Informação",
+        "sampleSuccess": "Esta é uma notificação de sucesso!",
+        "sampleError": "Esta é uma notificação de erro!",
+        "sampleWarning": "Esta é uma notificação de aviso!",
+        "sampleInfo": "Esta é uma notificação de informação!",
+        "tryPrompt": "Tente você mesmo:"
+      },
+      "upcoming": {
+        "title": "Componentes em Breve",
+        "description": "Mais componentes personalizados em breve.",
+        "comingSoon": "Em breve..."
+      },
+      "guidelines": {
+        "title": "Diretrizes dos Componentes",
+        "accessibility": "Acessibilidade",
+        "accessibilityDesc": "Todos os componentes seguem os padrões WCAG 2.1 AA com rótulos ARIA apropriados e navegação por teclado.",
+        "dark": "Suporte a Modo Escuro",
+        "darkDesc": "Cada componente se adapta perfeitamente aos temas claro e escuro com contraste de cor apropriado.",
+        "responsive": "Design Responsivo",
+        "responsiveDesc": "Todos os componentes são mobile-first e se adaptam a todos os tamanhos de tela usando Tailwind CSS.",
+        "i18n": "Internacionalização",
+        "i18nDesc": "Todo o conteúdo de texto é traduzível usando o sistema i18n (Inglês, Português, Espanhol)."
+      }
+    },
     "preferences": {
       "title": "Preferências",
       "description": "Gerencie suas configurações de conta e preferências.",
