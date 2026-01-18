@@ -25,6 +25,16 @@
     "components": {
       "title": "Componentes",
       "description": "Demonstração de todos os componentes personalizados disponíveis nesta aplicação.",
+      "lexical": {
+        "title": "Editor de Texto Rico (Lexical)",
+        "description": "Um editor de texto rico poderoso, extensível e personalizável construído com Lexical. Tente formatar o texto com os botões da barra de ferramentas.",
+        "placeholder": "Comece a digitar aqui... Tente usar os botões da barra de ferramentas para formatação.",
+        "characters": "Caracteres",
+        "words": "Palavras",
+        "output": "Saída do Editor",
+        "noContent": "Nenhum conteúdo ainda",
+        "headingPlaceholder": "Cabeçalho"
+      },
       "notifications": {
         "title": "Notificações",
         "description": "Notificações de toast que aparecem no canto superior direito e persistem na navegação.",
