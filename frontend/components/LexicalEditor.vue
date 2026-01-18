@@ -86,6 +86,34 @@
             />
           </label>
         </div>
+
+        <div class="w-px bg-gray-300 dark:bg-gray-600 mx-1"></div>
+
+        <!-- Link button -->
+        <button
+          @click="insertLink"
+          :class="[
+            'px-3 py-2 rounded text-sm font-medium transition-colors',
+            'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          ]"
+          type="button"
+          :title="$t('pages.components.lexical.insertLink')"
+        >
+          🔗
+        </button>
+
+        <!-- Image button -->
+        <button
+          @click="showImageDialog = true"
+          :class="[
+            'px-3 py-2 rounded text-sm font-medium transition-colors',
+            'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          ]"
+          type="button"
+          :title="$t('pages.components.lexical.insertImage')"
+        >
+          🖼️
+        </button>
       </div>
 
       <!-- Editor -->
