@@ -217,3 +217,97 @@ pub async fn get_profile(
         )),
     }
 }
+
+/// Update application logo
+pub async fn update_logo(
+    State(state): State<Arc<AppState>>,
+    axum::Json(payload): axum::Json<LogoUploadRequest>,
+) -> Result<Json<LogoResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Validate input
+    if payload.logo_url.is_empty() || payload.alt_text.is_empty() {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "Logo URL and alt text are required".to_string(),
+            }),
+        ));
+    }
+
+    let metadata = serde_json::json!({
+        "alt_text": payload.alt_text.clone(),
+        "updated_at": chrono::Utc::now().to_rfc3339()
+    });
+
+    // Upsert logo setting
+    let _result: AppSetting = sqlx::query_as::<_, AppSetting>(
+        "INSERT INTO app_settings (setting_key, setting_value, metadata)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (setting_key) DO UPDATE SET
+         setting_value = $2,
+         metadata = $3,
+         updated_at = NOW()
+         RETURNING *",
+    )
+    .bind("navbar_logo_url")
+    .bind(&payload.logo_url)
+    .bind(metadata)
+    .fetch_one(&state.db_pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Failed to save logo: {}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorResponse {
+                error: "Failed to save logo".to_string(),
+            }),
+        )
+    })?;
+
+    tracing::info!("Logo updated successfully");
+
+    Ok(Json(LogoResponse {
+        logo_url: payload.logo_url,
+        alt_text: payload.alt_text,
+    }))
+}
+
+/// Get application logo
+pub async fn get_logo(
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<LogoResponse>, (StatusCode, Json<ErrorResponse>)> {
+    let logo_setting: Option<AppSetting> = sqlx::query_as::<_, AppSetting>(
+        "SELECT * FROM app_settings WHERE setting_key = $1",
+    )
+    .bind("navbar_logo_url")
+    .fetch_optional(&state.db_pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Database error: {}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorResponse {
+                error: "Database error".to_string(),
+            }),
+        )
+    })?;
+
+    match logo_setting {
+        Some(setting) => {
+            let alt_text = setting
+                .metadata
+                .get("alt_text")
+                .and_then(|v| v.as_str())
+                .unwrap_or("Application Logo")
+                .to_string();
+
+            Ok(Json(LogoResponse {
+                logo_url: setting.setting_value.unwrap_or_default(),
+                alt_text,
+            }))
+        }
+        None => Ok(Json(LogoResponse {
+            logo_url: "".to_string(),
+            alt_text: "Application Logo".to_string(),
+        })),
+    }
+}
