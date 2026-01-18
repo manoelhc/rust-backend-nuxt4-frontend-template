@@ -7,5 +7,9 @@ export default {
     './plugins/**/*.{js,ts}',
     './app.vue',
     './node_modules/flowbite/**/*.{js,ts}'
-  ]
+  ],
+  theme: {
+    extend: {}
+  },
+  plugins: []
 }
