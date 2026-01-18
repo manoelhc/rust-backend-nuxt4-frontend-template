@@ -34,7 +34,18 @@
         "output": "Saída do Editor (HTML)",
         "noContent": "Nenhum conteúdo ainda",
         "headingPlaceholder": "Cabeçalho",
-        "learnMore": "Saiba mais sobre Lexical"
+        "learnMore": "Saiba mais sobre Lexical",
+        "bold": "Negrito",
+        "italic": "Itálico",
+        "underline": "Sublinhado",
+        "normal": "Normal",
+        "heading1": "Título 1",
+        "heading2": "Título 2",
+        "heading3": "Título 3",
+        "heading4": "Título 4",
+        "heading5": "Título 5",
+        "textColor": "Cor do Texto",
+        "backgroundColor": "Cor de Fundo"
       },
       "notifications": {
         "title": "Notificações",
