@@ -89,6 +89,26 @@
         "i18nDesc": "Todo el contenido de texto es traducible utilizando el sistema i18n (Inglés, Portugués, Español)."
       }
     },
+    "adminPreferences": {
+      "title": "Configuración de la Aplicación",
+      "description": "Administra la configuración y personalización de la aplicación.",
+      "logoSettings": "Configuración del Logo de la Barra de Navegación",
+      "logoUrl": "URL del Logo",
+      "logoUrlPlaceholder": "https://ejemplo.com/logo.png",
+      "logoUrlInfo": "Ingrese la URL completa de la imagen de su logo",
+      "logoAltText": "Texto Alternativo (Fallback)",
+      "logoAltTextPlaceholder": "Mi Logo de la Aplicación",
+      "logoAltTextInfo": "Describa el logo para accesibilidad y como fallback si la imagen no carga",
+      "noLogoPreview": "La vista previa del logo aparecerá aquí",
+      "updatePreview": "Actualizar Vista Previa",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "changesSaved": "¡Configuración de la aplicación guardada exitosamente!",
+      "saveError": "Falló al guardar la configuración de la aplicación",
+      "logoUrlRequired": "La URL del logo es obligatoria",
+      "altTextRequired": "El texto alternativo es obligatorio"
+    },
     "preferences": {
       "title": "Preferencias",
       "description": "Administra la configuración y preferencias de tu cuenta.",
