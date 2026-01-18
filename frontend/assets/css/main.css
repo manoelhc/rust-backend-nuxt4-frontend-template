@@ -1,3 +1,4 @@
+@config "../../tailwind.config.js";
 @import "tailwindcss";
 
 @source "../../components/**/*.{js,vue,ts}";
@@ -10,6 +11,14 @@
 @layer base {
   :root {
     color-scheme: light dark;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 }
 
