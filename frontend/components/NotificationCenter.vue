@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-4 right-4 z-50 space-y-2 w-full max-w-sm pointer-events-none">
+  <div class="fixed top-4 right-4 z-[9999] space-y-2 w-full max-w-sm pointer-events-none">
     <TransitionGroup
       name="notification"
       tag="div"
