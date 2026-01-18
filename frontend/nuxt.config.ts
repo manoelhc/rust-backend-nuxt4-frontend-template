@@ -13,10 +13,6 @@ export default defineNuxtConfig({
     }
   },
 
-  tailwindcss: {
-    configPath: './tailwind.config.js'
-  },
-
   devServer: {
     port: parseInt(process.env.NUXT_PUBLIC_APP_PORT || '3000')
   },
