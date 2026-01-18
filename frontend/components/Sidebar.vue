@@ -98,4 +98,5 @@
 </template>
 
 <script setup lang="ts">
+// Sidebar component - no state, just static layout
 </script>
