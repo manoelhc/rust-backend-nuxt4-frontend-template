@@ -129,20 +129,31 @@ mod tests {
             statements.len()
         );
 
-        // Check that DO block is preserved as one statement
-        let do_block = statements.iter().find(|s| s.contains("DO $$"));
+        // Check that DO blocks are preserved as statements
+        let do_blocks: Vec<_> = statements.iter().filter(|s| s.contains("DO $$")).collect();
         assert!(
-            do_block.is_some(),
-            "DO block not found in parsed statements"
+            do_blocks.len() >= 2,
+            "Expected at least 2 DO blocks, found {}",
+            do_blocks.len()
         );
 
-        let do_block = do_block.unwrap();
-        assert!(do_block.contains("DECLARE"));
-        assert!(do_block.contains("BEGIN"));
-        assert!(do_block.contains("END $$;"));
+        // Check that at least one DO block contains DECLARE (the second one with permissions)
+        let has_declare = do_blocks.iter().any(|s| s.contains("DECLARE"));
+        assert!(has_declare, "Expected at least one DO block with DECLARE");
 
-        // The DO block should contain the INSERT statement with semicolons
-        assert!(do_block.contains("INSERT INTO permissions"));
-        assert!(do_block.contains("ON CONFLICT"));
+        // All DO blocks should have BEGIN and END $$
+        for do_block in &do_blocks {
+            assert!(do_block.contains("BEGIN"));
+            assert!(do_block.contains("END $$;"));
+        }
+
+        // The permissions DO block should contain INSERT statements
+        let permissions_block = do_blocks
+            .iter()
+            .find(|s| s.contains("INSERT INTO permissions"));
+        assert!(
+            permissions_block.is_some(),
+            "Expected a DO block with INSERT INTO permissions"
+        );
     }
 }

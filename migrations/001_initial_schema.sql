@@ -127,14 +127,23 @@ COMMENT ON COLUMN roles.organization_id IS 'Organization ID for multi-tenancy da
 COMMENT ON COLUMN permissions.organization_id IS 'Organization ID for multi-tenancy data isolation. All queries should filter by this field.';
 COMMENT ON COLUMN app_settings.organization_id IS 'Organization ID for multi-tenancy data isolation. All queries should filter by this field.';
 
--- Insert default roles
-INSERT INTO roles (name, description, is_admin) 
-VALUES 
-    ('Admin', 'Full system administrator with all permissions', TRUE),
-    ('View', 'View-only access to assigned pages', FALSE)
-ON CONFLICT (name, COALESCE(organization_id, '00000000-0000-0000-0000-000000000000'::uuid)) DO NOTHING;
+-- Insert default roles using DO block to handle conflicts properly
+DO $$
+BEGIN
+    -- Insert Admin role if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM roles WHERE name = 'Admin' AND organization_id IS NULL) THEN
+        INSERT INTO roles (name, description, is_admin)
+        VALUES ('Admin', 'Full system administrator with all permissions', TRUE);
+    END IF;
+    
+    -- Insert View role if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM roles WHERE name = 'View' AND organization_id IS NULL) THEN
+        INSERT INTO roles (name, description, is_admin)
+        VALUES ('View', 'View-only access to assigned pages', FALSE);
+    END IF;
+END $$;
 
--- Get the Admin role ID for default permissions
+-- Insert default permissions for Admin role
 DO $$
 DECLARE
     admin_role_id UUID;
@@ -142,13 +151,28 @@ BEGIN
     SELECT id INTO admin_role_id FROM roles WHERE name = 'Admin' AND organization_id IS NULL LIMIT 1;
     
     -- Admin has full permissions on all default pages
+    -- Insert each permission only if it doesn't exist
     INSERT INTO permissions (role_id, page, can_view, can_edit, can_view_own, can_edit_own, can_view_ours, can_edit_ours)
-    VALUES 
-        (admin_role_id, 'dashboard', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-        (admin_role_id, 'users', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-        (admin_role_id, 'roles', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-        (admin_role_id, 'profile', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-        (admin_role_id, 'preferences', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-        (admin_role_id, 'support', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
-    ON CONFLICT (role_id, page, COALESCE(organization_id, '00000000-0000-0000-0000-000000000000'::uuid)) DO NOTHING;
+    SELECT admin_role_id, 'dashboard', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+    WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE role_id = admin_role_id AND page = 'dashboard' AND organization_id IS NULL);
+    
+    INSERT INTO permissions (role_id, page, can_view, can_edit, can_view_own, can_edit_own, can_view_ours, can_edit_ours)
+    SELECT admin_role_id, 'users', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+    WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE role_id = admin_role_id AND page = 'users' AND organization_id IS NULL);
+    
+    INSERT INTO permissions (role_id, page, can_view, can_edit, can_view_own, can_edit_own, can_view_ours, can_edit_ours)
+    SELECT admin_role_id, 'roles', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+    WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE role_id = admin_role_id AND page = 'roles' AND organization_id IS NULL);
+    
+    INSERT INTO permissions (role_id, page, can_view, can_edit, can_view_own, can_edit_own, can_view_ours, can_edit_ours)
+    SELECT admin_role_id, 'profile', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+    WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE role_id = admin_role_id AND page = 'profile' AND organization_id IS NULL);
+    
+    INSERT INTO permissions (role_id, page, can_view, can_edit, can_view_own, can_edit_own, can_view_ours, can_edit_ours)
+    SELECT admin_role_id, 'preferences', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+    WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE role_id = admin_role_id AND page = 'preferences' AND organization_id IS NULL);
+    
+    INSERT INTO permissions (role_id, page, can_view, can_edit, can_view_own, can_edit_own, can_view_ours, can_edit_ours)
+    SELECT admin_role_id, 'support', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+    WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE role_id = admin_role_id AND page = 'support' AND organization_id IS NULL);
 END $$;
