@@ -45,7 +45,18 @@
         "heading4": "Heading 4",
         "heading5": "Heading 5",
         "textColor": "Text Color",
-        "backgroundColor": "Background Color"
+        "backgroundColor": "Background Color",
+        "insertLink": "Insert Link",
+        "insertImage": "Insert Image",
+        "enterLinkUrl": "Enter the URL for the link:",
+        "enterLinkText": "Enter the text for the link:",
+        "imageUrl": "Image URL",
+        "imagePlaceholder": "https://example.com/image.jpg",
+        "imageAlt": "Alt Text (for accessibility)",
+        "imageAltPlaceholder": "Describe the image",
+        "imageUrlRequired": "Please enter an image URL",
+        "insert": "Insert",
+        "cancel": "Cancel"
       },
       "notifications": {
         "title": "Notifications",
