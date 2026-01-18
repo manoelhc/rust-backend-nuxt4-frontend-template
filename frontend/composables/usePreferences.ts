@@ -10,56 +10,21 @@ interface UserPreferences {
 const DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)'
 
 // Shared state across all component instances
-// Initialize with values from localStorage if available
-const theme = ref<Theme>((process.client && localStorage.getItem('theme') as Theme) || 'system')
-const savedLanguage = ref<string>((process.client && localStorage.getItem('language')) || 'en')
+// Initialize with system default, will be updated by loadPreferences
+const theme = ref<Theme>('system')
+const savedLanguage = ref<string>('en')
 
 // MediaQueryList instance for system theme detection
 let mediaQueryList: MediaQueryList | null = null
 
 export const usePreferences = () => {
   const { locale, setLocale } = useI18n()
-  
-  // Load preferences from localStorage
-  const loadPreferences = () => {
-    if (process.client) {
-      // Load theme preference
-      const savedTheme = localStorage.getItem('theme') as Theme
-      if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-        theme.value = savedTheme
-      }
-      
-      // Load language preference
-      const savedLang = localStorage.getItem('language')
-      if (savedLang) {
-        savedLanguage.value = savedLang
-        setLocale(savedLang)
-      }
-      
-      // Apply theme
-      applyTheme(theme.value)
-    }
-  }
-  
-  // Initialize media query list
-  const initMediaQuery = () => {
-    if (process.client && !mediaQueryList) {
-      mediaQueryList = window.matchMedia(DARK_MODE_MEDIA_QUERY)
-      
-      // Listen for system theme changes
-      mediaQueryList.addEventListener('change', (e) => {
-        if (theme.value === 'system') {
-          applyTheme('system')
-        }
-      })
-    }
-  }
-  
+
   // Apply theme to document
   const applyTheme = (selectedTheme: Theme) => {
     if (process.client) {
       const root = document.documentElement
-      
+
       if (selectedTheme === 'system') {
         initMediaQuery()
         const systemPrefersDark = mediaQueryList?.matches ?? false
@@ -70,9 +35,44 @@ export const usePreferences = () => {
         }
       } else if (selectedTheme === 'dark') {
         root.classList.add('dark')
-      } else {
+      } else if (selectedTheme === 'light') {
         root.classList.remove('dark')
       }
+    }
+  }
+
+  // Load preferences from localStorage
+  const loadPreferences = () => {
+    if (process.client) {
+      // Load theme preference
+      const savedTheme = localStorage.getItem('theme') as Theme
+      if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+        theme.value = savedTheme
+      }
+
+      // Load language preference
+      const savedLang = localStorage.getItem('language')
+      if (savedLang) {
+        savedLanguage.value = savedLang
+        setLocale(savedLang)
+      }
+
+      // Apply theme
+      applyTheme(theme.value)
+    }
+  }
+  
+  // Initialize media query list
+  const initMediaQuery = () => {
+    if (process.client && !mediaQueryList) {
+      mediaQueryList = window.matchMedia(DARK_MODE_MEDIA_QUERY)
+
+      // Listen for system theme changes
+      mediaQueryList.addEventListener('change', (e) => {
+        if (theme.value === 'system') {
+          applyTheme('system')
+        }
+      })
     }
   }
   
