@@ -91,12 +91,12 @@
       <!-- Editor -->
       <div
         ref="editorContainer"
-        class="p-4 min-h-64 text-gray-900 dark:text-gray-100"
+        class="editor-wrapper p-4 min-h-64 text-gray-900 dark:text-gray-100"
       >
         <div
           ref="editor"
           contenteditable="true"
-          class="outline-none"
+          class="editor-content outline-none"
           :placeholder="$t('pages.components.lexical.placeholder')"
         >
           {{ $t('pages.components.lexical.placeholder') }}
