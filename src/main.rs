@@ -90,6 +90,26 @@ struct ProfileResponse {
     user: User,
 }
 
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
+struct AppSetting {
+    id: Uuid,
+    setting_key: String,
+    setting_value: Option<String>,
+    metadata: JsonValue,
+}
+
+#[derive(Serialize, Deserialize)]
+struct LogoUploadRequest {
+    logo_url: String,
+    alt_text: String,
+}
+
+#[derive(Serialize)]
+struct LogoResponse {
+    logo_url: String,
+    alt_text: String,
+}
+
 #[derive(Serialize)]
 struct ErrorResponse {
     error: String,
