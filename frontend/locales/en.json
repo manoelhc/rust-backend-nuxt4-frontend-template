@@ -89,6 +89,26 @@
         "i18nDesc": "All text content is translatable using the i18n system (English, Portuguese, Spanish)."
       }
     },
+    "adminPreferences": {
+      "title": "App Settings",
+      "description": "Manage application-wide settings and configuration.",
+      "logoSettings": "Navbar Logo Settings",
+      "logoUrl": "Logo URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "logoUrlInfo": "Enter the complete URL of your logo image",
+      "logoAltText": "Alt Text (Fallback)",
+      "logoAltTextPlaceholder": "My Application Logo",
+      "logoAltTextInfo": "Describe the logo for accessibility and as fallback if image fails to load",
+      "noLogoPreview": "Logo preview will appear here",
+      "updatePreview": "Update Preview",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "changesSaved": "App settings saved successfully!",
+      "saveError": "Failed to save app settings",
+      "logoUrlRequired": "Logo URL is required",
+      "altTextRequired": "Alt text is required"
+    },
     "preferences": {
       "title": "Preferences",
       "description": "Manage your account settings and preferences.",
