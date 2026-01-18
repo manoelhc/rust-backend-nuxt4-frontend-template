@@ -25,6 +25,16 @@
     "components": {
       "title": "Componentes",
       "description": "Demostración de todos los componentes personalizados disponibles en esta aplicación.",
+      "lexical": {
+        "title": "Editor de Texto Enriquecido (Lexical)",
+        "description": "Un editor de texto enriquecido poderoso, extensible y personalizable construido con Lexical. Intenta formatear texto con los botones de la barra de herramientas.",
+        "placeholder": "Comienza a escribir aquí... Intenta usar los botones de la barra de herramientas para formato.",
+        "characters": "Caracteres",
+        "words": "Palabras",
+        "output": "Salida del Editor",
+        "noContent": "Sin contenido aún",
+        "headingPlaceholder": "Encabezado"
+      },
       "notifications": {
         "title": "Notificaciones",
         "description": "Notificaciones toast que aparecen en la esquina superior derecha y persisten en la navegación.",
