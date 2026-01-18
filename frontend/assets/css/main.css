@@ -7,8 +7,6 @@
 @source "../../app.vue";
 @source "../../node_modules/flowbite/**/*.{js,ts}";
 
-@config "./tailwind.config.js";
-
 @layer base {
   :root {
     color-scheme: light dark;
