@@ -169,6 +169,7 @@ async fn main() {
         .route("/system/uptime", get(system_uptime))
         .route("/system/onboarding", post(system_onboarding))
         .route("/profile", get(get_profile))
+        .route("/admin/logo", post(update_logo))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             auth_middleware,
