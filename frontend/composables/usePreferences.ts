@@ -66,11 +66,20 @@ export const usePreferences = () => {
       // Load theme preference
       const savedTheme = localStorage.getItem('theme') as Theme
       console.log('[loadPreferences] savedTheme from localStorage:', savedTheme)
+
       if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
         console.log('[loadPreferences] setting theme to:', savedTheme)
         theme.value = savedTheme
+      } else if (!savedTheme) {
+        // First time user - ensure we remove dark class
+        console.log('[loadPreferences] no saved theme, defaulting to light')
+        theme.value = 'light'
+        // Explicitly remove dark class to ensure light mode is applied
+        document.documentElement.classList.remove('dark')
       } else {
-        console.log('[loadPreferences] no saved theme, keeping default:', theme.value)
+        console.log('[loadPreferences] invalid saved theme, resetting to light:', savedTheme)
+        theme.value = 'light'
+        localStorage.removeItem('theme')
       }
 
       // Load language preference
