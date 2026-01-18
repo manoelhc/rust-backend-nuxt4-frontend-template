@@ -10,6 +10,7 @@
     "support": "Soporte",
     "components": "Componentes",
     "preferences": "Preferencias",
+    "adminPreferences": "Configuración de la Aplicación",
     "logout": "Cerrar Sesión"
   },
   "pages": {
