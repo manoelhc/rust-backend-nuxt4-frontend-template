@@ -102,8 +102,10 @@ onMounted(() => {
 })
 
 function toggleDarkMode() {
+  console.log('[toggleDarkMode] called, isDark.value:', isDark.value, 'effectiveTheme.value:', effectiveTheme.value)
   // Toggle between light and dark (not system)
   const newTheme = isDark.value ? 'light' : 'dark'
+  console.log('[toggleDarkMode] toggling to:', newTheme)
   saveTheme(newTheme)
 }
 
