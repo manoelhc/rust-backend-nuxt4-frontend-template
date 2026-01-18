@@ -277,7 +277,10 @@ pub async fn update_logo(
         )
     })?;
 
-    tracing::info!("Logo updated successfully for organization: {:?}", organization_id);
+    tracing::info!(
+        "Logo updated successfully for organization: {:?}",
+        organization_id
+    );
 
     Ok(Json(LogoResponse {
         logo_url: payload.logo_url,
