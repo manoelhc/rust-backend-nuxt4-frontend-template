@@ -34,7 +34,18 @@
         "output": "Salida del Editor (HTML)",
         "noContent": "Sin contenido aún",
         "headingPlaceholder": "Encabezado",
-        "learnMore": "Obtenga más información sobre Lexical"
+        "learnMore": "Obtenga más información sobre Lexical",
+        "bold": "Negrita",
+        "italic": "Cursiva",
+        "underline": "Subrayado",
+        "normal": "Normal",
+        "heading1": "Encabezado 1",
+        "heading2": "Encabezado 2",
+        "heading3": "Encabezado 3",
+        "heading4": "Encabezado 4",
+        "heading5": "Encabezado 5",
+        "textColor": "Color del Texto",
+        "backgroundColor": "Color de Fondo"
       },
       "notifications": {
         "title": "Notificaciones",
