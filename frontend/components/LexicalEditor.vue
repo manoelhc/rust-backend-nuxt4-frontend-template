@@ -300,3 +300,56 @@ const changeBackgroundColor = (event: Event) => {
   execCommand('backColor', color)
 }
 </script>
+
+<style scoped>
+/* Override global heading styles inside the editor */
+:deep(.editor-content) h1,
+:deep(.editor-content) h2,
+:deep(.editor-content) h3,
+:deep(.editor-content) h4,
+:deep(.editor-content) h5,
+:deep(.editor-content) h6 {
+  @apply text-inherit font-bold margin-y-2 !important;
+}
+
+/* Specific heading sizes */
+:deep(.editor-content) h1 {
+  @apply text-2xl !important;
+}
+
+:deep(.editor-content) h2 {
+  @apply text-xl !important;
+}
+
+:deep(.editor-content) h3 {
+  @apply text-lg !important;
+}
+
+:deep(.editor-content) h4 {
+  @apply text-base !important;
+}
+
+:deep(.editor-content) h5 {
+  @apply text-sm !important;
+}
+
+/* Ensure paragraphs are properly styled */
+:deep(.editor-content) p {
+  @apply text-base margin-y-1 !important;
+}
+
+/* Default block element styling */
+:deep(.editor-content) {
+  line-height: 1.6;
+}
+
+/* Prevent global styles from affecting editor content */
+:deep(.editor-content *) {
+  all: revert;
+}
+
+:deep(.editor-content) {
+  color: inherit;
+  font-family: inherit;
+}
+</style>
