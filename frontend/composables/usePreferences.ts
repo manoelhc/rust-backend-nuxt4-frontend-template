@@ -10,8 +10,8 @@ interface UserPreferences {
 const DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)'
 
 // Shared state across all component instances
-// Initialize with system default, will be updated by loadPreferences
-const theme = ref<Theme>('system')
+// Initialize with light theme by default
+const theme = ref<Theme>('light')
 const savedLanguage = ref<string>('en')
 
 // MediaQueryList instance for system theme detection
