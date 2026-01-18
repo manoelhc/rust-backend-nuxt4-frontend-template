@@ -112,13 +112,6 @@ export const usePreferences = () => {
     return theme.value
   })
 
-  // Watch theme changes and apply them to the DOM
-  if (process.client) {
-    watch(() => theme.value, (newTheme) => {
-      applyTheme(newTheme)
-    })
-  }
-
   return {
     theme,
     savedLanguage,
