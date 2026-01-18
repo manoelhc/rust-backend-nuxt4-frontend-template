@@ -1,19 +1,171 @@
 @import "tailwindcss";
 
+/* Define CSS variables for theming */
+@theme {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f3f4f6;
+  --color-bg-tertiary: #e5e7eb;
+  
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-tertiary: #9ca3af;
+  
+  --color-border: #e5e7eb;
+  
+  --color-bg-dark: #111827;
+  --color-bg-dark-secondary: #1f2937;
+  --color-bg-dark-tertiary: #374151;
+  
+  --color-text-dark: #f3f4f6;
+  --color-text-dark-secondary: #d1d5db;
+  --color-text-dark-tertiary: #9ca3af;
+  
+  --color-border-dark: #374151;
+}
+
 @layer base {
-  /* Light mode (default) */
+  /* Light mode - default */
   :root {
     color-scheme: light;
-  }
-
-  html {
-    @apply antialiased bg-white text-gray-900;
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f3f4f6;
+    --color-bg-tertiary: #e5e7eb;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-tertiary: #9ca3af;
+    --color-border: #e5e7eb;
   }
 
   /* Dark mode */
   html.dark {
     color-scheme: dark;
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-bg-tertiary: #374151;
+    --color-text-primary: #f3f4f6;
+    --color-text-secondary: #d1d5db;
+    --color-text-tertiary: #9ca3af;
+    --color-border: #374151;
+  }
+
+  /* Base element styles */
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-white text-gray-900 transition-colors duration-200;
+  }
+
+  html.dark body {
     @apply bg-gray-900 text-gray-100;
+  }
+
+  /* Ensure all text colors are properly set */
+  p, span, a, li, td, th, label {
+    @apply text-gray-900;
+  }
+
+  html.dark p,
+  html.dark span,
+  html.dark a,
+  html.dark li,
+  html.dark td,
+  html.dark th,
+  html.dark label {
+    @apply text-gray-100;
+  }
+
+  /* Card/container styles */
+  .card, 
+  .bg-white {
+    @apply bg-white text-gray-900 border-gray-200;
+  }
+
+  html.dark .card,
+  html.dark .bg-white {
+    @apply bg-gray-800 text-gray-100 border-gray-700;
+  }
+
+  /* Input and form element styles */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    @apply bg-gray-50 text-gray-900 border-gray-300;
+  }
+
+  html.dark input[type="text"],
+  html.dark input[type="email"],
+  html.dark input[type="password"],
+  html.dark input[type="number"],
+  html.dark input[type="date"],
+  html.dark input[type="time"],
+  html.dark select,
+  html.dark textarea {
+    @apply bg-gray-700 text-gray-100 border-gray-600;
+  }
+
+  /* Placeholder text */
+  ::placeholder {
+    @apply text-gray-500;
+  }
+
+  html.dark ::placeholder {
+    @apply text-gray-400;
+  }
+}
+
+/* Flowbite component overrides for proper theme support */
+@layer components {
+  /* Ensure Flowbite components respect the dark mode class */
+  .dark .bg-white {
+    @apply bg-gray-800;
+  }
+
+  .dark .text-gray-900 {
+    @apply text-gray-100;
+  }
+
+  .dark .border-gray-200 {
+    @apply border-gray-700;
+  }
+
+  .dark .bg-gray-50 {
+    @apply bg-gray-700;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-gray-400;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-gray-300;
+  }
+
+  .dark .bg-gray-100 {
+    @apply bg-gray-700;
+  }
+
+  .dark .border-gray-300 {
+    @apply border-gray-600;
+  }
+
+  /* Dropdown and menu items */
+  .dark [role="menu"] {
+    @apply bg-gray-800 border-gray-700;
+  }
+
+  .dark [role="menuitem"] {
+    @apply text-gray-100;
+  }
+
+  .dark [role="menuitem"]:hover {
+    @apply bg-gray-700;
   }
 }
 
