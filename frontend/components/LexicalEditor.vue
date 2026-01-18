@@ -223,6 +223,9 @@ const isUnderline = ref(false)
 const currentHeading = ref<string>('normal')
 const textColor = ref<string>('#000000')
 const backgroundColor = ref<string>('#ffffff')
+const showImageDialog = ref(false)
+const imageUrl = ref<string>('')
+const imageAlt = ref<string>('')
 
 const { t } = useI18n()
 
