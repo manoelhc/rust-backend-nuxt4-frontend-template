@@ -285,13 +285,28 @@ pub async fn update_logo(
     }))
 }
 
-/// Get application logo
+/// Get application logo (organization-scoped)
 pub async fn get_logo(
     State(state): State<Arc<AppState>>,
+    claims: Claims,
 ) -> Result<Json<LogoResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Extract organization_id from claims
+    let organization_id: Option<Uuid> = if let Some(org_name) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org_name)
+            .fetch_optional(&state.db_pool)
+            .await
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
+
+    // Fetch logo for the current organization
     let logo_setting: Option<AppSetting> = sqlx::query_as::<_, AppSetting>(
-        "SELECT * FROM app_settings WHERE setting_key = $1",
+        "SELECT * FROM app_settings WHERE organization_id = $1 AND setting_key = $2",
     )
+    .bind(organization_id)
     .bind("navbar_logo_url")
     .fetch_optional(&state.db_pool)
     .await
