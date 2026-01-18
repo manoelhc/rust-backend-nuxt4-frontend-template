@@ -126,6 +126,7 @@ interface UserProfile {
 const { locale, locales } = useI18n()
 const { get } = useApi()
 const { savePreferences, loadPreferences, theme, savedLanguage } = usePreferences()
+const { success: showSuccessNotification } = useNotifications()
 
 // User information
 const userName = ref('John Doe')
@@ -134,7 +135,6 @@ const userEmail = ref('user@example.com')
 // Preferences state
 const selectedLanguage = ref(locale.value)
 const selectedTheme = ref<'light' | 'dark' | 'system'>('system')
-const showSuccessMessage = ref(false)
 
 // Available locales for the select
 const availableLocales = computed(() => {
