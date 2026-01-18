@@ -123,7 +123,7 @@ interface UserProfile {
   }
 }
 
-const { locale, locales } = useI18n()
+const { locale, locales, t } = useI18n()
 const { get } = useApi()
 const { savePreferences, loadPreferences, theme, savedLanguage } = usePreferences()
 const { success: showSuccessNotification } = useNotifications()
