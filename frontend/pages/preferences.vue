@@ -13,14 +13,6 @@
         </div>
       </div>
 
-      <!-- Success Message -->
-      <div
-        v-if="showSuccessMessage"
-        class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-        role="alert"
-      >
-        {{ $t('pages.preferences.changesSaved') }}
-      </div>
 
       <!-- User Information Card -->
       <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
