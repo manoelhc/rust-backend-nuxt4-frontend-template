@@ -218,9 +218,10 @@ pub async fn get_profile(
     }
 }
 
-/// Update application logo
+/// Update application logo (organization-scoped)
 pub async fn update_logo(
     State(state): State<Arc<AppState>>,
+    claims: Claims,
     axum::Json(payload): axum::Json<LogoUploadRequest>,
 ) -> Result<Json<LogoResponse>, (StatusCode, Json<ErrorResponse>)> {
     // Validate input
@@ -233,21 +234,34 @@ pub async fn update_logo(
         ));
     }
 
+    // Extract organization_id from claims
+    let organization_id: Option<Uuid> = if let Some(org_name) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org_name)
+            .fetch_optional(&state.db_pool)
+            .await
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
+
     let metadata = serde_json::json!({
         "alt_text": payload.alt_text.clone(),
         "updated_at": chrono::Utc::now().to_rfc3339()
     });
 
-    // Upsert logo setting
+    // Upsert logo setting with organization_id
     let _result: AppSetting = sqlx::query_as::<_, AppSetting>(
-        "INSERT INTO app_settings (setting_key, setting_value, metadata)
-         VALUES ($1, $2, $3)
-         ON CONFLICT (setting_key) DO UPDATE SET
-         setting_value = $2,
-         metadata = $3,
+        "INSERT INTO app_settings (organization_id, setting_key, setting_value, metadata)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (organization_id, setting_key) DO UPDATE SET
+         setting_value = $3,
+         metadata = $4,
          updated_at = NOW()
          RETURNING *",
     )
+    .bind(organization_id)
     .bind("navbar_logo_url")
     .bind(&payload.logo_url)
     .bind(metadata)
@@ -263,7 +277,7 @@ pub async fn update_logo(
         )
     })?;
 
-    tracing::info!("Logo updated successfully");
+    tracing::info!("Logo updated successfully for organization: {:?}", organization_id);
 
     Ok(Json(LogoResponse {
         logo_url: payload.logo_url,
