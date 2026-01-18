@@ -9,8 +9,9 @@ use uuid::Uuid;
 
 use crate::middleware::validate_jwt_token_with_claims;
 use crate::models::{
-    AppState, Claims, ErrorResponse, HealthResponse, OnboardingResponse, ProfileResponse,
-    UptimeResponse, User, ValidateTokenRequest, ValidateTokenResponse, VersionResponse,
+    AppSetting, AppState, Claims, ErrorResponse, HealthResponse, LogoResponse, LogoUploadRequest,
+    OnboardingResponse, ProfileResponse, UptimeResponse, User, ValidateTokenRequest,
+    ValidateTokenResponse, VersionResponse,
 };
 
 // Environment constants
