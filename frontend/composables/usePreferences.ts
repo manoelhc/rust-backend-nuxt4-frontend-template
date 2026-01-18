@@ -76,20 +76,6 @@ export const usePreferences = () => {
     }
   }
   
-  // Initialize media query list
-  const initMediaQuery = () => {
-    if (process.client && !mediaQueryList) {
-      mediaQueryList = window.matchMedia(DARK_MODE_MEDIA_QUERY)
-
-      // Listen for system theme changes
-      mediaQueryList.addEventListener('change', (e) => {
-        if (theme.value === 'system') {
-          applyTheme('system')
-        }
-      })
-    }
-  }
-  
   // Save theme preference
   const saveTheme = (newTheme: Theme) => {
     if (process.client) {
