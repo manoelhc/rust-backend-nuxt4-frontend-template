@@ -1,28 +1,31 @@
 export default defineNuxtPlugin(() => {
-  // Configure Flowbite to use class-based dark mode
   if (process.client && typeof window !== 'undefined') {
-    // Wait for Flowbite to load
-    const checkFlowbite = setInterval(() => {
-      if (typeof window !== 'undefined' && (window as any).initFlowbite) {
-        clearInterval(checkFlowbite)
-        
-        // Configure Flowbite's dark mode to use 'class' strategy
-        const htmlElement = document.documentElement
-        const isDark = htmlElement.classList.contains('dark')
-        
-        // Tell Flowbite to respect the class-based dark mode
-        if (isDark) {
-          htmlElement.setAttribute('data-theme', 'dark')
-        } else {
-          htmlElement.setAttribute('data-theme', 'light')
+    // Watch for dark class changes and reinitialize Flowbite
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          // Re-initialize Flowbite dropdowns, modals, etc. when theme changes
+          if (typeof (window as any).initFlowbite === 'function') {
+            ;(window as any).initFlowbite()
+          }
         }
-        
-        // Re-initialize Flowbite with the current theme
+      })
+    })
+
+    // Start observing the html element for class changes
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+
+    // Wait for Flowbite script to load and initialize
+    const checkFlowbite = setInterval(() => {
+      if (typeof (window as any).initFlowbite === 'function') {
+        clearInterval(checkFlowbite)
         ;(window as any).initFlowbite()
       }
     }, 100)
-    
-    // Clear interval after 2 seconds to prevent infinite loop
-    setTimeout(() => clearInterval(checkFlowbite), 2000)
+
+    setTimeout(() => clearInterval(checkFlowbite), 3000)
   }
 })
