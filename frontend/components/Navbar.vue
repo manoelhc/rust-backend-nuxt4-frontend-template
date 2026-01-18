@@ -92,11 +92,11 @@ watch(() => effectiveTheme.value, (newTheme) => {
 }, { immediate: true })
 
 onMounted(async () => {
+  // Wait for hydration to complete
+  await nextTick()
+
   // Load preferences (theme and language) only on client after hydration
   if (process.client) {
-    // Wait for hydration to complete
-    await nextTick()
-
     loadPreferences()
 
     // Force a small delay to ensure DOM is fully updated
@@ -104,17 +104,21 @@ onMounted(async () => {
 
     // Trigger Flowbite reinitialization after theme is applied
     if (typeof (window as any).initFlowbite === 'function') {
-      ;(window as any).initFlowbite()
+      setTimeout(() => {
+        ;(window as any).initFlowbite()
+      }, 50)
     }
   }
 
   // Close dropdown when clicking outside
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement
-    if (!target.closest('.relative')) {
-      showLangDropdown.value = false
-    }
-  })
+  if (process.client) {
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('.relative')) {
+        showLangDropdown.value = false
+      }
+    })
+  }
 })
 
 async function toggleDarkMode() {
