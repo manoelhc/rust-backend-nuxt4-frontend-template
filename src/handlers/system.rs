@@ -9,8 +9,9 @@ use uuid::Uuid;
 
 use crate::middleware::validate_jwt_token_with_claims;
 use crate::models::{
-    AppState, Claims, ErrorResponse, HealthResponse, OnboardingResponse, ProfileResponse,
-    UptimeResponse, User, ValidateTokenRequest, ValidateTokenResponse, VersionResponse,
+    AppSetting, AppState, Claims, ErrorResponse, HealthResponse, LogoResponse, LogoUploadRequest,
+    OnboardingResponse, ProfileResponse, UptimeResponse, User, ValidateTokenRequest,
+    ValidateTokenResponse, VersionResponse,
 };
 
 // Environment constants
@@ -214,5 +215,131 @@ pub async fn get_profile(
                 error: "User not found".to_string(),
             }),
         )),
+    }
+}
+
+/// Update application logo (organization-scoped)
+pub async fn update_logo(
+    State(state): State<Arc<AppState>>,
+    claims: Claims,
+    axum::Json(payload): axum::Json<LogoUploadRequest>,
+) -> Result<Json<LogoResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Validate input
+    if payload.logo_url.is_empty() || payload.alt_text.is_empty() {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "Logo URL and alt text are required".to_string(),
+            }),
+        ));
+    }
+
+    // Extract organization_id from claims
+    let organization_id: Option<Uuid> = if let Some(org_name) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org_name)
+            .fetch_optional(&state.db_pool)
+            .await
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
+
+    let metadata = serde_json::json!({
+        "alt_text": payload.alt_text.clone(),
+        "updated_at": chrono::Utc::now().to_rfc3339()
+    });
+
+    // Upsert logo setting with organization_id
+    let _result: AppSetting = sqlx::query_as::<_, AppSetting>(
+        "INSERT INTO app_settings (organization_id, setting_key, setting_value, metadata)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (organization_id, setting_key) DO UPDATE SET
+         setting_value = $3,
+         metadata = $4,
+         updated_at = NOW()
+         RETURNING *",
+    )
+    .bind(organization_id)
+    .bind("navbar_logo_url")
+    .bind(&payload.logo_url)
+    .bind(metadata)
+    .fetch_one(&state.db_pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Failed to save logo: {}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorResponse {
+                error: "Failed to save logo".to_string(),
+            }),
+        )
+    })?;
+
+    tracing::info!(
+        "Logo updated successfully for organization: {:?}",
+        organization_id
+    );
+
+    Ok(Json(LogoResponse {
+        logo_url: payload.logo_url,
+        alt_text: payload.alt_text,
+    }))
+}
+
+/// Get application logo (organization-scoped)
+pub async fn get_logo(
+    State(state): State<Arc<AppState>>,
+    claims: Claims,
+) -> Result<Json<LogoResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Extract organization_id from claims
+    let organization_id: Option<Uuid> = if let Some(org_name) = &claims.organization {
+        sqlx::query_scalar("SELECT id FROM organizations WHERE name = $1")
+            .bind(org_name)
+            .fetch_optional(&state.db_pool)
+            .await
+            .ok()
+            .flatten()
+    } else {
+        None
+    };
+
+    // Fetch logo for the current organization
+    let logo_setting: Option<AppSetting> = sqlx::query_as::<_, AppSetting>(
+        "SELECT * FROM app_settings WHERE organization_id = $1 AND setting_key = $2",
+    )
+    .bind(organization_id)
+    .bind("navbar_logo_url")
+    .fetch_optional(&state.db_pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Database error: {}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorResponse {
+                error: "Database error".to_string(),
+            }),
+        )
+    })?;
+
+    match logo_setting {
+        Some(setting) => {
+            let alt_text = setting
+                .metadata
+                .get("alt_text")
+                .and_then(|v| v.as_str())
+                .unwrap_or("Application Logo")
+                .to_string();
+
+            Ok(Json(LogoResponse {
+                logo_url: setting.setting_value.unwrap_or_default(),
+                alt_text,
+            }))
+        }
+        None => Ok(Json(LogoResponse {
+            logo_url: "".to_string(),
+            alt_text: "Application Logo".to_string(),
+        })),
     }
 }

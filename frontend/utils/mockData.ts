@@ -41,6 +41,16 @@ export const mockData = {
       updated_at: '2026-01-16T00:00:00Z'
     }
   },
+
+  adminLogo: {
+    logo_url: '',
+    alt_text: 'Application Logo'
+  },
+
+  navbarLogo: {
+    logo_url: '',
+    alt_text: 'Application Logo'
+  },
   
   // Admin endpoints mock data
   roles: [

@@ -3,9 +3,9 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center justify-start rtl:justify-end">
-          <button 
+          <button
             @click="toggleSidebar"
-            type="button" 
+            type="button"
             class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
           >
             <span class="sr-only">Open sidebar</span>
@@ -13,9 +13,19 @@
               <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
             </svg>
           </button>
-          <span class="ml-2 text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-            {{ projectName }}
-          </span>
+
+          <!-- Logo or Project Name -->
+          <div class="ml-2 flex items-center gap-2">
+            <img
+              v-if="logoUrl"
+              :src="logoUrl"
+              :alt="logoAlt"
+              class="h-8 w-auto object-contain"
+            />
+            <span class="text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+              {{ projectName }}
+            </span>
+          </div>
         </div>
         
         <div class="flex items-center gap-3">
@@ -75,8 +85,11 @@ const { locale, locales, setLocale } = useI18n()
 const config = useRuntimeConfig()
 const projectName = config.public.projectName
 const { loadPreferences, saveTheme, saveLanguage, effectiveTheme } = usePreferences()
+const { get } = useApi()
 
 const showLangDropdown = ref(false)
+const logoUrl = ref('')
+const logoAlt = ref('Application Logo')
 
 const currentLocale = computed(() => locale.value)
 const currentLocaleName = computed(() => {
@@ -84,25 +97,64 @@ const currentLocaleName = computed(() => {
   return loc?.name || 'English'
 })
 
-const isDark = computed(() => effectiveTheme.value === 'dark')
+const isDark = ref(false)
 
-onMounted(() => {
-  // Load preferences (theme and language)
-  loadPreferences()
+// Update isDark only on client after hydration
+watch(() => effectiveTheme.value, (newTheme) => {
+  isDark.value = newTheme === 'dark'
+}, { immediate: true })
+
+onMounted(async () => {
+  // Wait for hydration to complete
+  await nextTick()
+
+  // Load preferences (theme and language) only on client after hydration
+  if (process.client) {
+    loadPreferences()
+
+    // Force a small delay to ensure DOM is fully updated
+    await nextTick()
+
+    // Trigger Flowbite reinitialization after theme is applied
+    if (typeof (window as any).initFlowbite === 'function') {
+      setTimeout(() => {
+        ;(window as any).initFlowbite()
+      }, 50)
+    }
+  }
+
+  // Load navbar logo
+  try {
+    const response = await get<{ logo_url: string; alt_text: string }>('/admin/logo', 'navbarLogo')
+    if (response) {
+      if (response.logo_url) {
+        logoUrl.value = response.logo_url
+        logoAlt.value = response.alt_text || 'Application Logo'
+      }
+    }
+  } catch (error) {
+    // Silently fail - logo is optional and will use text fallback
+    // This is expected during development when backend endpoint may not be available yet
+  }
 
   // Close dropdown when clicking outside
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement
-    if (!target.closest('.relative')) {
-      showLangDropdown.value = false
-    }
-  })
+  if (process.client) {
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('.relative')) {
+        showLangDropdown.value = false
+      }
+    })
+  }
 })
 
-function toggleDarkMode() {
+async function toggleDarkMode() {
   // Toggle between light and dark (not system)
   const newTheme = isDark.value ? 'light' : 'dark'
   saveTheme(newTheme)
+
+  // Force Vue to re-evaluate computed properties
+  await nextTick()
 }
 
 function toggleLangDropdown() {

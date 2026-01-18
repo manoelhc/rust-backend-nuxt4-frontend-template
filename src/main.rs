@@ -14,7 +14,7 @@ use tower_http::cors::CorsLayer;
 use tracing::info;
 
 use handlers::{admin, system};
-use middleware::{admin_middleware, auth_middleware};
+use middleware::admin_middleware;
 use migrations::parse_sql_statements;
 use models::AppState;
 
@@ -41,10 +41,7 @@ async fn main() {
         .await
         .expect("Failed to connect to database");
 
-    let migration_files = vec![
-        include_str!("../migrations/001_create_users_table.sql"),
-        include_str!("../migrations/002_create_roles_and_permissions.sql"),
-    ];
+    let migration_files = vec![include_str!("../migrations/001_initial_schema.sql")];
 
     // Run migrations
     for migration_content in migration_files {
@@ -73,9 +70,13 @@ async fn main() {
         .route("/system/uptime", get(system::system_uptime))
         .route("/system/onboarding", post(system::system_onboarding))
         .route("/profile", get(system::get_profile))
+        .route(
+            "/admin/logo",
+            get(system::get_logo).post(system::update_logo),
+        )
         .route_layer(axum_middleware::from_fn_with_state(
             state.clone(),
-            auth_middleware,
+            middleware::auth_middleware,
         ));
 
     // Build admin-only routes

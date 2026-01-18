@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   
   modules: [
     '@nuxtjs/i18n'
@@ -57,6 +57,11 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' }
       ],
       script: [
+        {
+          // Load theme initialization script early, before Vue hydration
+          src: '/theme-init.js',
+          async: false
+        },
         {
           src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.0/dist/flowbite.min.js',
           defer: true

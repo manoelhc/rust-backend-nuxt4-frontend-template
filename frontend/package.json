@@ -10,8 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@lexical/plain-text": "^0.39.0",
+    "@lexical/react": "^0.39.0",
+    "@lexical/rich-text": "^0.39.0",
     "@nuxtjs/i18n": "^10.2.1",
     "flowbite": "^4.0.1",
+    "lexical": "^0.39.0",
     "nuxt": "^4.2.2",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"

@@ -13,14 +13,6 @@
         </div>
       </div>
 
-      <!-- Success Message -->
-      <div
-        v-if="showSuccessMessage"
-        class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-        role="alert"
-      >
-        {{ $t('pages.preferences.changesSaved') }}
-      </div>
 
       <!-- User Information Card -->
       <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -131,9 +123,10 @@ interface UserProfile {
   }
 }
 
-const { locale, locales } = useI18n()
+const { locale, locales, t } = useI18n()
 const { get } = useApi()
 const { savePreferences, loadPreferences, theme, savedLanguage } = usePreferences()
+const { success: showSuccessNotification } = useNotifications()
 
 // User information
 const userName = ref('John Doe')
@@ -142,7 +135,6 @@ const userEmail = ref('user@example.com')
 // Preferences state
 const selectedLanguage = ref(locale.value)
 const selectedTheme = ref<'light' | 'dark' | 'system'>('system')
-const showSuccessMessage = ref(false)
 
 // Available locales for the select
 const availableLocales = computed(() => {
@@ -177,13 +169,11 @@ const saveChanges = () => {
     theme: selectedTheme.value,
     language: selectedLanguage.value
   })
-  
-  // Show success message
-  showSuccessMessage.value = true
-  
-  // Hide success message after 3 seconds
-  setTimeout(() => {
-    showSuccessMessage.value = false
-  }, 3000)
+
+  // Show success notification (5 second duration)
+  showSuccessNotification(
+    t('pages.preferences.changesSaved'),
+    5000
+  )
 }
 </script>
