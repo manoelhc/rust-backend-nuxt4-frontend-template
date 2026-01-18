@@ -3,9 +3,9 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center justify-start rtl:justify-end">
-          <button 
+          <button
             @click="toggleSidebar"
-            type="button" 
+            type="button"
             class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
           >
             <span class="sr-only">Open sidebar</span>
@@ -13,9 +13,19 @@
               <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
             </svg>
           </button>
-          <span class="ml-2 text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-            {{ projectName }}
-          </span>
+
+          <!-- Logo or Project Name -->
+          <div class="ml-2 flex items-center gap-2">
+            <img
+              v-if="logoUrl"
+              :src="logoUrl"
+              :alt="logoAlt"
+              class="h-8 w-auto object-contain"
+            />
+            <span class="text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+              {{ projectName }}
+            </span>
+          </div>
         </div>
         
         <div class="flex items-center gap-3">
