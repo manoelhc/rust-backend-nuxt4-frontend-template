@@ -119,13 +119,13 @@ mod tests {
     #[test]
     fn test_parse_sql_statements_real_migration() {
         // Test with actual migration content
-        let sql = include_str!("../migrations/002_create_roles_and_permissions.sql");
+        let sql = include_str!("../migrations/001_initial_schema.sql");
         let statements = parse_sql_statements(sql);
 
         // Should have multiple statements
         assert!(
-            statements.len() > 5,
-            "Expected more than 5 statements, got {}",
+            statements.len() > 10,
+            "Expected more than 10 statements, got {}",
             statements.len()
         );
 
