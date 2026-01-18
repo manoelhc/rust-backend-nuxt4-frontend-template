@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
     <ClientOnly>
       <Navbar />
       <Sidebar />
 
       <!-- Main content -->
-      <div class="sm:ml-64">
-        <div class="p-4 mt-14">
+      <div class="sm:ml-64 flex flex-col flex-1">
+        <div class="p-4 mt-14 flex-1">
           <slot />
         </div>
 
