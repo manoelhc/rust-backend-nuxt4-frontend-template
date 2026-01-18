@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
-    <ClientOnly>
+  <ClientOnly>
+    <div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <Sidebar />
 
@@ -17,8 +17,8 @@
           </div>
         </footer>
       </div>
-    </ClientOnly>
-  </div>
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
