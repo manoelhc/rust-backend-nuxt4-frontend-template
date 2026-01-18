@@ -27,13 +27,14 @@
       "description": "Demonstração de todos os componentes personalizados disponíveis nesta aplicação.",
       "lexical": {
         "title": "Editor de Texto Rico (Lexical)",
-        "description": "Um editor de texto rico poderoso, extensível e personalizável construído com Lexical. Tente formatar o texto com os botões da barra de ferramentas.",
+        "description": "Um editor de texto rico poderoso, extensível e personalizável construído com Facebook Lexical. Tente formatar o texto com os botões da barra de ferramentas.",
         "placeholder": "Comece a digitar aqui... Tente usar os botões da barra de ferramentas para formatação.",
         "characters": "Caracteres",
         "words": "Palavras",
-        "output": "Saída do Editor",
+        "output": "Saída do Editor (HTML)",
         "noContent": "Nenhum conteúdo ainda",
-        "headingPlaceholder": "Cabeçalho"
+        "headingPlaceholder": "Cabeçalho",
+        "learnMore": "Saiba mais sobre Lexical"
       },
       "notifications": {
         "title": "Notificações",
