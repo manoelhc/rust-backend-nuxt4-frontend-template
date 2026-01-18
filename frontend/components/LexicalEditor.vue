@@ -304,72 +304,72 @@ const changeBackgroundColor = (event: Event) => {
 <style scoped>
 /* Override global heading styles inside the editor */
 :deep(.editor-content h1) {
-  font-size: 2em;
-  font-weight: bold;
-  margin: 0.67em 0;
-  display: block;
-  color: inherit;
+  font-size: 2em !important;
+  font-weight: bold !important;
+  margin: 0.67em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 :deep(.editor-content h2) {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0.75em 0;
-  display: block;
-  color: inherit;
+  font-size: 1.5em !important;
+  font-weight: bold !important;
+  margin: 0.75em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 :deep(.editor-content h3) {
-  font-size: 1.17em;
-  font-weight: bold;
-  margin: 0.83em 0;
-  display: block;
-  color: inherit;
+  font-size: 1.17em !important;
+  font-weight: bold !important;
+  margin: 0.83em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 :deep(.editor-content h4) {
-  font-weight: bold;
-  margin: 1em 0;
-  display: block;
-  color: inherit;
+  font-weight: bold !important;
+  margin: 1em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 :deep(.editor-content h5) {
-  font-size: 0.83em;
-  font-weight: bold;
-  margin: 1.17em 0;
-  display: block;
-  color: inherit;
+  font-size: 0.83em !important;
+  font-weight: bold !important;
+  margin: 1.17em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 :deep(.editor-content h6) {
-  font-size: 0.67em;
-  font-weight: bold;
-  margin: 1.33em 0;
-  display: block;
-  color: inherit;
+  font-size: 0.67em !important;
+  font-weight: bold !important;
+  margin: 1.33em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 /* Ensure paragraphs are properly styled */
 :deep(.editor-content p) {
-  margin: 1em 0;
-  display: block;
-  color: inherit;
+  margin: 1em 0 !important;
+  display: block !important;
+  color: inherit !important;
 }
 
 /* Default text formatting */
 :deep(.editor-content b),
 :deep(.editor-content strong) {
-  font-weight: bold;
+  font-weight: bold !important;
 }
 
 :deep(.editor-content i),
 :deep(.editor-content em) {
-  font-style: italic;
+  font-style: italic !important;
 }
 
 :deep(.editor-content u) {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 
 /* Preserve line height and text flow */
