@@ -5,6 +5,18 @@
 </template>
 
 <script setup lang="ts">
+// Initialize theme BEFORE rendering to prevent flash
+// This runs during SSR and client mount
+if (process.client) {
+  const savedTheme = localStorage.getItem('theme')
+
+  // If no saved theme, start with light mode
+  if (!savedTheme) {
+    // Remove any dark class that might have been set by system preference
+    document.documentElement.classList.remove('dark')
+  }
+}
+
 // Debug script to check initial theme state
 onMounted(() => {
   if (process.client) {
