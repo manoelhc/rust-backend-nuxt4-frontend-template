@@ -126,13 +126,15 @@ onMounted(async () => {
   // Load navbar logo
   try {
     const response = await get<{ logo_url: string; alt_text: string }>('/admin/logo', 'navbarLogo')
-    if (response?.logo_url) {
-      logoUrl.value = response.logo_url
-      logoAlt.value = response.alt_text || 'Application Logo'
+    if (response) {
+      if (response.logo_url) {
+        logoUrl.value = response.logo_url
+        logoAlt.value = response.alt_text || 'Application Logo'
+      }
     }
   } catch (error) {
-    console.error('Failed to load navbar logo:', error)
-    // Continue without logo
+    // Silently fail - logo is optional and will use text fallback
+    // This is expected during development when backend endpoint may not be available yet
   }
 
   // Close dropdown when clicking outside
