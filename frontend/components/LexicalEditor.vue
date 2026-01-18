@@ -2,17 +2,18 @@
   <div class="space-y-4">
     <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
       <!-- Toolbar -->
-      <div class="flex flex-wrap gap-1 p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+      <div class="flex flex-wrap gap-2 p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <!-- Basic formatting -->
         <button
           @click="toggleBold"
           :class="[
             'px-3 py-2 rounded text-sm font-medium transition-colors',
-            isBold 
-              ? 'bg-blue-500 text-white' 
+            isBold
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
           ]"
           type="button"
-          title="Bold (Ctrl+B)"
+          :title="`${$t('pages.components.lexical.bold')} (Ctrl+B)`"
         >
           <strong>B</strong>
         </button>
@@ -20,12 +21,12 @@
           @click="toggleItalic"
           :class="[
             'px-3 py-2 rounded text-sm font-medium transition-colors',
-            isItalic 
-              ? 'bg-blue-500 text-white' 
+            isItalic
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
           ]"
           type="button"
-          title="Italic (Ctrl+I)"
+          :title="`${$t('pages.components.lexical.italic')} (Ctrl+I)`"
         >
           <em>I</em>
         </button>
@@ -33,42 +34,58 @@
           @click="toggleUnderline"
           :class="[
             'px-3 py-2 rounded text-sm font-medium transition-colors',
-            isUnderline 
-              ? 'bg-blue-500 text-white' 
+            isUnderline
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
           ]"
           type="button"
-          title="Underline (Ctrl+U)"
+          :title="`${$t('pages.components.lexical.underline')} (Ctrl+U)`"
         >
           <u>U</u>
         </button>
+
         <div class="w-px bg-gray-300 dark:bg-gray-600 mx-1"></div>
-        <button
-          @click="toggleHeading1"
+
+        <!-- Heading select -->
+        <select
+          :value="currentHeading"
+          @change="changeHeading"
           :class="[
             'px-3 py-2 rounded text-sm font-medium transition-colors',
-            isHeading1 
-              ? 'bg-blue-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            currentHeading !== 'normal'
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
           ]"
-          type="button"
-          title="Heading 1"
         >
-          H1
-        </button>
-        <button
-          @click="toggleHeading2"
-          :class="[
-            'px-3 py-2 rounded text-sm font-medium transition-colors',
-            isHeading2 
-              ? 'bg-blue-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-          ]"
-          type="button"
-          title="Heading 2"
-        >
-          H2
-        </button>
+          <option value="normal">{{ $t('pages.components.lexical.normal') }}</option>
+          <option value="h1">{{ $t('pages.components.lexical.heading1') }}</option>
+          <option value="h2">{{ $t('pages.components.lexical.heading2') }}</option>
+          <option value="h3">{{ $t('pages.components.lexical.heading3') }}</option>
+          <option value="h4">{{ $t('pages.components.lexical.heading4') }}</option>
+          <option value="h5">{{ $t('pages.components.lexical.heading5') }}</option>
+        </select>
+
+        <div class="w-px bg-gray-300 dark:bg-gray-600 mx-1"></div>
+
+        <!-- Color pickers -->
+        <div class="flex items-center gap-2">
+          <label :title="$t('pages.components.lexical.textColor')" class="cursor-pointer">
+            <input
+              type="color"
+              :value="textColor"
+              @change="changeTextColor"
+              class="w-8 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+            />
+          </label>
+          <label :title="$t('pages.components.lexical.backgroundColor')" class="cursor-pointer">
+            <input
+              type="color"
+              :value="backgroundColor"
+              @change="changeBackgroundColor"
+              class="w-8 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+            />
+          </label>
+        </div>
       </div>
 
       <!-- Editor -->
