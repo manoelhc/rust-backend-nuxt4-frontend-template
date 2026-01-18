@@ -86,10 +86,18 @@ const currentLocaleName = computed(() => {
 
 const isDark = computed(() => effectiveTheme.value === 'dark')
 
-onMounted(() => {
+onMounted(async () => {
   // Load preferences (theme and language) only on client after hydration
   if (process.client) {
     loadPreferences()
+
+    // Force a small delay to ensure DOM is fully updated
+    await nextTick()
+
+    // Trigger Flowbite reinitialization after theme is applied
+    if (typeof (window as any).initFlowbite === 'function') {
+      ;(window as any).initFlowbite()
+    }
   }
 
   // Close dropdown when clicking outside
