@@ -141,8 +141,9 @@ const editorHtml = ref<string>('')
 const isBold = ref(false)
 const isItalic = ref(false)
 const isUnderline = ref(false)
-const isHeading1 = ref(false)
-const isHeading2 = ref(false)
+const currentHeading = ref<string>('normal')
+const textColor = ref<string>('#000000')
+const backgroundColor = ref<string>('#ffffff')
 
 const { t } = useI18n()
 
@@ -195,8 +196,7 @@ const updateToolbarState = () => {
     isBold.value = false
     isItalic.value = false
     isUnderline.value = false
-    isHeading1.value = false
-    isHeading2.value = false
+    currentHeading.value = 'normal'
     return
   }
 
@@ -213,18 +213,41 @@ const updateToolbarState = () => {
   isBold.value = false
   isItalic.value = false
   isUnderline.value = false
-  isHeading1.value = false
-  isHeading2.value = false
+  currentHeading.value = 'normal'
 
   while (parent && parent !== editor.value) {
     const tag = parent.tagName?.toLowerCase()
     if (tag === 'strong' || tag === 'b') isBold.value = true
     if (tag === 'em' || tag === 'i') isItalic.value = true
     if (tag === 'u') isUnderline.value = true
-    if (tag === 'h1') isHeading1.value = true
-    if (tag === 'h2') isHeading2.value = true
+    if (tag === 'h1') currentHeading.value = 'h1'
+    if (tag === 'h2') currentHeading.value = 'h2'
+    if (tag === 'h3') currentHeading.value = 'h3'
+    if (tag === 'h4') currentHeading.value = 'h4'
+    if (tag === 'h5') currentHeading.value = 'h5'
     parent = parent.parentElement
   }
+
+  // Get current text color and background color
+  if (parent) {
+    const computedStyle = window.getComputedStyle(parent)
+    const color = computedStyle.color
+    textColor.value = rgbToHex(color)
+    const bgColor = computedStyle.backgroundColor
+    backgroundColor.value = rgbToHex(bgColor)
+  }
+}
+
+const rgbToHex = (rgb: string): string => {
+  const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/)
+  if (!match) return '#000000'
+
+  const hex = (x: string) => {
+    const hex = parseInt(x).toString(16)
+    return hex.length === 1 ? '0' + hex : hex
+  }
+
+  return '#' + hex(match[1]) + hex(match[2]) + hex(match[3])
 }
 
 const execCommand = (command: string, value?: string) => {
@@ -246,11 +269,34 @@ const toggleUnderline = () => {
   execCommand('underline')
 }
 
-const toggleHeading1 = () => {
-  execCommand('formatBlock', 'h1')
+const changeHeading = (event: Event) => {
+  const value = (event.target as HTMLSelectElement).value
+  if (!editor.value) return
+
+  // Get current selection
+  const selection = window.getSelection()
+  if (!selection || selection.rangeCount === 0) return
+
+  if (value === 'normal') {
+    // Remove heading format - wrap in paragraph
+    document.execCommand('formatBlock', false, 'p')
+  } else {
+    // Apply heading format
+    document.execCommand('formatBlock', false, value)
+  }
+
+  updateState()
+  updateToolbarState()
+  editor.value.focus()
 }
 
-const toggleHeading2 = () => {
-  execCommand('formatBlock', 'h2')
+const changeTextColor = (event: Event) => {
+  const color = (event.target as HTMLInputElement).value
+  execCommand('foreColor', color)
+}
+
+const changeBackgroundColor = (event: Event) => {
+  const color = (event.target as HTMLInputElement).value
+  execCommand('backColor', color)
 }
 </script>
