@@ -25,6 +25,16 @@
     "components": {
       "title": "Components",
       "description": "Showcase and demo of all custom components available in this application.",
+      "lexical": {
+        "title": "Rich Text Editor (Lexical)",
+        "description": "A powerful, extensible, and customizable rich text editor built with Lexical. Try formatting text with the toolbar buttons.",
+        "placeholder": "Start typing here... Try using the toolbar buttons for formatting.",
+        "characters": "Characters",
+        "words": "Words",
+        "output": "Editor Output",
+        "noContent": "No content yet",
+        "headingPlaceholder": "Heading"
+      },
       "notifications": {
         "title": "Notifications",
         "description": "Toast notifications that appear in the top-right corner and persist across page navigation.",
