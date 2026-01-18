@@ -34,7 +34,18 @@
         "output": "Editor Output (HTML)",
         "noContent": "No content yet",
         "headingPlaceholder": "Heading",
-        "learnMore": "Learn more about Lexical"
+        "learnMore": "Learn more about Lexical",
+        "bold": "Bold",
+        "italic": "Italic",
+        "underline": "Underline",
+        "normal": "Normal",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "heading4": "Heading 4",
+        "heading5": "Heading 5",
+        "textColor": "Text Color",
+        "backgroundColor": "Background Color"
       },
       "notifications": {
         "title": "Notifications",
