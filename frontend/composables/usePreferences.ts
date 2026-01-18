@@ -50,6 +50,10 @@ const applyTheme = (selectedTheme: Theme) => {
         root.classList.remove('dark')
       }
     }
+
+    // Force a style recalculation by triggering reflow
+    // This ensures browser repaints all elements with new styles
+    const trigger = root.offsetHeight
   }
 }
 
