@@ -22,6 +22,39 @@
       "title": "Support",
       "description": "Get help and support for your application."
     },
+    "components": {
+      "title": "Components",
+      "description": "Showcase and demo of all custom components available in this application.",
+      "notifications": {
+        "title": "Notifications",
+        "description": "Toast notifications that appear in the top-right corner and persist across page navigation.",
+        "showSuccess": "Show Success",
+        "showError": "Show Error",
+        "showWarning": "Show Warning",
+        "showInfo": "Show Info",
+        "sampleSuccess": "This is a success notification!",
+        "sampleError": "This is an error notification!",
+        "sampleWarning": "This is a warning notification!",
+        "sampleInfo": "This is an info notification!",
+        "tryPrompt": "Try it yourself:"
+      },
+      "upcoming": {
+        "title": "Upcoming Components",
+        "description": "More custom components are coming soon.",
+        "comingSoon": "Coming soon..."
+      },
+      "guidelines": {
+        "title": "Component Guidelines",
+        "accessibility": "Accessibility",
+        "accessibilityDesc": "All components follow WCAG 2.1 AA standards with proper ARIA labels and keyboard navigation.",
+        "dark": "Dark Mode Support",
+        "darkDesc": "Every component seamlessly adapts to light and dark themes with proper color contrast.",
+        "responsive": "Responsive Design",
+        "responsiveDesc": "All components are mobile-first and adapt to all screen sizes using Tailwind CSS.",
+        "i18n": "Internationalization",
+        "i18nDesc": "All text content is translatable using the i18n system (English, Portuguese, Spanish)."
+      }
+    },
     "preferences": {
       "title": "Preferences",
       "description": "Manage your account settings and preferences.",
