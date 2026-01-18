@@ -45,6 +45,7 @@ async fn main() {
         include_str!("../migrations/001_create_users_table.sql"),
         include_str!("../migrations/002_create_app_settings_table.sql"),
         include_str!("../migrations/002_create_roles_and_permissions.sql"),
+        include_str!("../migrations/004_add_organization_to_app_settings.sql"),
     ];
 
     // Run migrations
