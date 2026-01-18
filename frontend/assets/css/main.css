@@ -8,16 +8,20 @@
 @source "../../node_modules/flowbite/**/*.{js,ts}";
 
 @layer base {
+  /* Light mode (default) */
   :root {
-    color-scheme: light dark;
+    color-scheme: light;
   }
 
   html {
     @apply antialiased;
+    @apply bg-gray-50;
   }
 
+  /* Dark mode */
   html.dark {
     color-scheme: dark;
+    @apply bg-gray-900;
   }
 }
 
