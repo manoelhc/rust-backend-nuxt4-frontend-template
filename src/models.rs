@@ -190,3 +190,26 @@ pub struct PaginationQuery {
     pub page: Option<u32>,
     pub per_page: Option<u32>,
 }
+
+// App Settings models
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
+pub struct AppSetting {
+    pub id: Uuid,
+    pub setting_key: String,
+    pub setting_value: Option<String>,
+    pub metadata: JsonValue,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct LogoUploadRequest {
+    pub logo_url: String,
+    pub alt_text: String,
+}
+
+#[derive(Serialize)]
+pub struct LogoResponse {
+    pub logo_url: String,
+    pub alt_text: String,
+}
