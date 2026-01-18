@@ -172,7 +172,7 @@ const saveChanges = () => {
 
   // Show success notification (5 second duration)
   showSuccessNotification(
-    $t('pages.preferences.changesSaved'),
+    t('pages.preferences.changesSaved'),
     5000
   )
 }
