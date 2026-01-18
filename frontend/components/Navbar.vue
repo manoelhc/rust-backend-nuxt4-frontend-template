@@ -87,8 +87,10 @@ const currentLocaleName = computed(() => {
 const isDark = computed(() => effectiveTheme.value === 'dark')
 
 onMounted(() => {
-  // Load preferences (theme and language)
-  loadPreferences()
+  // Load preferences (theme and language) only on client after hydration
+  if (process.client) {
+    loadPreferences()
+  }
 
   // Close dropdown when clicking outside
   document.addEventListener('click', (e) => {
